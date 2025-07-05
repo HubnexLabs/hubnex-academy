@@ -1,8 +1,9 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FreshLeadsSection } from '@/components/FreshLeadsSection';
+import { MyLeadsSection } from '@/components/MyLeadsSection';
 import { 
   Users, 
   UserCheck, 
@@ -23,10 +24,12 @@ interface DashboardStats {
   revenueThisWeek: number;
   revenueToday: number;
   projectedRevenue: number;
+  myLeadsCount: number;
+  unclaimedLeads: number;
 }
 
 export const Dashboard = () => {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isSalesPerson } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     totalLeads: 0,
     freshLeads: 0,
@@ -38,6 +41,8 @@ export const Dashboard = () => {
     revenueThisWeek: 0,
     revenueToday: 0,
     projectedRevenue: 0,
+    myLeadsCount: 0,
+    unclaimedLeads: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -49,22 +54,43 @@ export const Dashboard = () => {
     try {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-      // Total leads
+      // Total leads (role-based filtering)
       const leadsQuery = supabase.from('leads').select('*', { count: 'exact' });
       if (!isAdmin && user) {
         leadsQuery.eq('assigned_to', user.id);
       }
       const { count: totalLeads } = await leadsQuery;
 
-      // Fresh leads
+      // Fresh leads (unassigned for sales persons, all fresh for admin)
       const freshLeadsQuery = supabase.from('leads').select('*', { count: 'exact' }).eq('status', 'fresh');
-      if (!isAdmin && user) {
+      if (isSalesPerson) {
+        freshLeadsQuery.is('assigned_to', null);
+      } else if (!isAdmin && user) {
         freshLeadsQuery.eq('assigned_to', user.id);
       }
       const { count: freshLeads } = await freshLeadsQuery;
+
+      // Sales person specific stats
+      let myLeadsCount = 0;
+      let unclaimedLeads = 0;
+      
+      if (isSalesPerson && user) {
+        // My leads count
+        const { count: myCount } = await supabase
+          .from('leads')
+          .select('*', { count: 'exact' })
+          .eq('assigned_to', user.id);
+        myLeadsCount = myCount || 0;
+
+        // Unclaimed leads count  
+        const { count: unclaimedCount } = await supabase
+          .from('leads')
+          .select('*', { count: 'exact' })
+          .eq('status', 'fresh')
+          .is('assigned_to', null);
+        unclaimedLeads = unclaimedCount || 0;
+      }
 
       // Total sales persons (only for admin)
       let totalSalesPersons = 0;
@@ -77,7 +103,7 @@ export const Dashboard = () => {
         totalSalesPersons = count || 0;
       }
 
-      // Closed deals this month
+      // Closed deals this month (role-based filtering)
       const closedDealsMonthQuery = supabase
         .from('leads')
         .select('deal_value', { count: 'exact' })
@@ -91,7 +117,7 @@ export const Dashboard = () => {
       // Calculate revenue
       const revenueThisMonth = closedDealsMonth?.reduce((sum, lead) => sum + (lead.deal_value || 0), 0) || 0;
 
-      // Projected revenue from pipeline
+      // Projected revenue from pipeline (role-based filtering)
       const pipelineQuery = supabase
         .from('leads')
         .select('deal_value')
@@ -113,6 +139,8 @@ export const Dashboard = () => {
         revenueThisWeek: 0, // Simplified for now
         revenueToday: 0, // Simplified for now
         projectedRevenue,
+        myLeadsCount,
+        unclaimedLeads,
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -142,98 +170,167 @@ export const Dashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalLeads}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.freshLeads} fresh leads
-            </p>
-          </CardContent>
-        </Card>
+        {isSalesPerson ? (
+          <>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Fresh Leads Available</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.unclaimedLeads}</div>
+                <p className="text-xs text-muted-foreground">
+                  Available to claim
+                </p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Deals Closed</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.dealsClosedThisMonth}</div>
-            <p className="text-xs text-muted-foreground">
-              This month
-            </p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">My Leads</CardTitle>
+                <UserCheck className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.myLeadsCount}</div>
+                <p className="text-xs text-muted-foreground">
+                  Assigned to me
+                </p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">₹{(stats.revenueThisMonth / 1000).toFixed(0)}K</div>
-            <p className="text-xs text-muted-foreground">
-              This month
-            </p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Deals Closed</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.dealsClosedThisMonth}</div>
+                <p className="text-xs text-muted-foreground">
+                  This month
+                </p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Projected Revenue</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">₹{(stats.projectedRevenue / 1000).toFixed(0)}K</div>
-            <p className="text-xs text-muted-foreground">
-              Pipeline value
-            </p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">₹{(stats.revenueThisMonth / 1000).toFixed(0)}K</div>
+                <p className="text-xs text-muted-foreground">
+                  This month
+                </p>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          <>
+            {/* Admin stats - keep existing code */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalLeads}</div>
+                <p className="text-xs text-muted-foreground">
+                  {stats.freshLeads} fresh leads
+                </p>
+              </CardContent>
+            </Card>
 
-        {isAdmin && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Sales Team</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalSalesPersons}</div>
-              <p className="text-xs text-muted-foreground">
-                Sales persons
-              </p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Deals Closed</CardTitle>
+                <UserCheck className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.dealsClosedThisMonth}</div>
+                <p className="text-xs text-muted-foreground">
+                  This month
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">₹{(stats.revenueThisMonth / 1000).toFixed(0)}K</div>
+                <p className="text-xs text-muted-foreground">
+                  This month
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Projected Revenue</CardTitle>
+                <Target className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">₹{(stats.projectedRevenue / 1000).toFixed(0)}K</div>
+                <p className="text-xs text-muted-foreground">
+                  Pipeline value
+                </p>
+              </CardContent>
+            </Card>
+
+            {isAdmin && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Sales Team</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.totalSalesPersons}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Sales persons
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
       </div>
 
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <Clock className="h-4 w-4 text-gray-400" />
-              <div>
-                <p className="text-sm font-medium">New lead assigned</p>
-                <p className="text-xs text-gray-500">2 hours ago</p>
+      {/* Sales Person specific sections */}
+      {isSalesPerson && (
+        <div className="space-y-6">
+          <FreshLeadsSection />
+          <MyLeadsSection />
+        </div>
+      )}
+
+      {/* Recent Activity for Admin */}
+      {isAdmin && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <Clock className="h-4 w-4 text-gray-400" />
+                <div>
+                  <p className="text-sm font-medium">New lead assigned</p>
+                  <p className="text-xs text-gray-500">2 hours ago</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <TrendingUp className="h-4 w-4 text-green-500" />
+                <div>
+                  <p className="text-sm font-medium">Deal closed - ₹50,000</p>
+                  <p className="text-xs text-gray-500">5 hours ago</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <TrendingUp className="h-4 w-4 text-green-500" />
-              <div>
-                <p className="text-sm font-medium">Deal closed - ₹50,000</p>
-                <p className="text-xs text-gray-500">5 hours ago</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

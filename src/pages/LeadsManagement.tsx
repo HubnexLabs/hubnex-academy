@@ -27,7 +27,8 @@ import {
   Filter, 
   Download,
   Eye,
-  UserPlus
+  UserPlus,
+  Settings
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Database } from '@/integrations/supabase/types';
@@ -37,7 +38,7 @@ type LeadStatus = Database['public']['Enums']['lead_status'];
 type LeadSource = Database['public']['Enums']['lead_source'];
 
 export const LeadsManagement = () => {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isSalesPerson } = useAuth();
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,9 +56,11 @@ export const LeadsManagement = () => {
       let query = supabase.from('leads').select('*').order('created_at', { ascending: false });
 
       // Apply role-based filtering
-      if (!isAdmin && user) {
+      if (isSalesPerson && user) {
+        // Sales persons only see their assigned leads
         query = query.eq('assigned_to', user.id);
       }
+      // Admin sees all leads
 
       // Apply status filter
       if (statusFilter !== 'all') {
@@ -91,15 +94,15 @@ export const LeadsManagement = () => {
     }
   };
 
-  const claimLead = async (leadId: string) => {
-    if (!user) return;
+  const reassignLead = async (leadId: string, newUserId: string) => {
+    if (!isAdmin) return;
 
     try {
       const { error } = await supabase
         .from('leads')
         .update({ 
-          assigned_to: user.id,
-          status: 'in_progress' as LeadStatus,
+          assigned_to: newUserId === 'unassign' ? null : newUserId,
+          status: newUserId === 'unassign' ? 'fresh' : 'in_progress',
           updated_at: new Date().toISOString()
         })
         .eq('id', leadId);
@@ -108,15 +111,15 @@ export const LeadsManagement = () => {
 
       toast({
         title: "Success",
-        description: "Lead claimed successfully",
+        description: newUserId === 'unassign' ? "Lead unassigned successfully" : "Lead reassigned successfully",
       });
 
       fetchLeads();
     } catch (error) {
-      console.error('Error claiming lead:', error);
+      console.error('Error reassigning lead:', error);
       toast({
         title: "Error",
-        description: "Failed to claim lead",
+        description: "Failed to reassign lead",
         variant: "destructive",
       });
     }
@@ -176,8 +179,12 @@ export const LeadsManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Leads Management</h1>
-          <p className="text-gray-600">Manage and track all your leads</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {isSalesPerson ? 'My Leads' : 'Leads Management'}
+          </h1>
+          <p className="text-gray-600">
+            {isSalesPerson ? 'Manage your assigned leads' : 'Manage and track all leads'}
+          </p>
         </div>
         <div className="flex space-x-2">
           <Button onClick={exportLeads} variant="outline">
@@ -241,7 +248,9 @@ export const LeadsManagement = () => {
       {/* Leads Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Leads ({filteredLeads.length})</CardTitle>
+          <CardTitle>
+            {isSalesPerson ? `My Leads (${filteredLeads.length})` : `All Leads (${filteredLeads.length})`}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
@@ -284,13 +293,14 @@ export const LeadsManagement = () => {
                         <Button variant="ghost" size="sm">
                           <Eye className="w-4 h-4" />
                         </Button>
-                        {!lead.assigned_to && (
+                        {isAdmin && (
                           <Button 
                             variant="ghost" 
                             size="sm"
-                            onClick={() => claimLead(lead.id)}
+                            onClick={() => reassignLead(lead.id, 'unassign')}
+                            title="Reassign Lead"
                           >
-                            <UserPlus className="w-4 h-4" />
+                            <Settings className="w-4 h-4" />
                           </Button>
                         )}
                       </div>
