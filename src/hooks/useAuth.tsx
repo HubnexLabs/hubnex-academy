@@ -28,7 +28,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // For now, just set loading to false since we're using simple auth
+    // Check for existing session on app load
+    const storedUser = localStorage.getItem('crm_user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('crm_user');
+      }
+    }
     setLoading(false);
   }, []);
 
@@ -78,14 +88,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return false;
       }
 
-      // Set user state directly without Supabase auth
-      setUser({
+      // Create user object and store in both state and localStorage
+      const userObj = {
         id: userData.id,
         email: userData.email,
         full_name: userData.full_name,
         role: userData.role,
         monthly_target: userData.monthly_target,
-      });
+      };
+
+      setUser(userObj);
+      localStorage.setItem('crm_user', JSON.stringify(userObj));
 
       toast({
         title: "Login Successful",
@@ -107,6 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       setUser(null);
+      localStorage.removeItem('crm_user');
       toast({
         title: "Logged Out",
         description: "You have been successfully logged out.",

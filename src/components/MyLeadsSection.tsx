@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { 
   Table,
   TableBody,
@@ -20,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Eye, Edit } from 'lucide-react';
+import { Eye, Edit, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -32,6 +33,8 @@ export const MyLeadsSection = () => {
   const { toast } = useToast();
   const [myLeads, setMyLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingLead, setEditingLead] = useState<string | null>(null);
+  const [editValues, setEditValues] = useState<{[key: string]: any}>({});
 
   useEffect(() => {
     if (isSalesPerson && user) {
@@ -94,6 +97,56 @@ export const MyLeadsSection = () => {
     }
   };
 
+  const handleEditLead = (lead: Lead) => {
+    setEditingLead(lead.id);
+    setEditValues({
+      deal_value: lead.deal_value || 0,
+      experience: lead.experience || '',
+    });
+  };
+
+  const handleSaveEdit = async (leadId: string) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .update({
+          deal_value: editValues.deal_value,
+          experience: editValues.experience,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', leadId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Lead updated successfully",
+      });
+
+      // Update local state
+      setMyLeads(prev => prev.map(lead => 
+        lead.id === leadId 
+          ? { ...lead, deal_value: editValues.deal_value, experience: editValues.experience }
+          : lead
+      ));
+
+      setEditingLead(null);
+      setEditValues({});
+    } catch (error) {
+      console.error('Error updating lead:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update lead",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingLead(null);
+    setEditValues({});
+  };
+
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'fresh': return 'bg-green-100 text-green-800';
@@ -152,7 +205,17 @@ export const MyLeadsSection = () => {
                       <div className="text-gray-500">{lead.phone}</div>
                     </div>
                   </TableCell>
-                  <TableCell>{lead.experience || 'N/A'}</TableCell>
+                  <TableCell>
+                    {editingLead === lead.id ? (
+                      <Input
+                        value={editValues.experience}
+                        onChange={(e) => setEditValues(prev => ({...prev, experience: e.target.value}))}
+                        className="w-32"
+                      />
+                    ) : (
+                      lead.experience || 'N/A'
+                    )}
+                  </TableCell>
                   <TableCell>
                     <Select 
                       value={lead.status} 
@@ -170,16 +233,40 @@ export const MyLeadsSection = () => {
                       </SelectContent>
                     </Select>
                   </TableCell>
-                  <TableCell>₹{(lead.deal_value || 0).toLocaleString()}</TableCell>
+                  <TableCell>
+                    {editingLead === lead.id ? (
+                      <Input
+                        type="number"
+                        value={editValues.deal_value}
+                        onChange={(e) => setEditValues(prev => ({...prev, deal_value: Number(e.target.value)}))}
+                        className="w-24"
+                      />
+                    ) : (
+                      `₹${(lead.deal_value || 0).toLocaleString()}`
+                    )}
+                  </TableCell>
                   <TableCell>{new Date(lead.updated_at).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="w-4 h-4" />
-                      </Button>
+                      {editingLead === lead.id ? (
+                        <>
+                          <Button variant="ghost" size="sm" onClick={() => handleSaveEdit(lead.id)}>
+                            <Save className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleEditLead(lead)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

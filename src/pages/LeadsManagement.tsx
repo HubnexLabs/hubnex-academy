@@ -24,11 +24,9 @@ import {
 import { 
   Plus, 
   Search, 
-  Filter, 
   Download,
   Eye,
-  UserPlus,
-  Settings
+  Edit
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Database } from '@/integrations/supabase/types';
@@ -94,37 +92,6 @@ export const LeadsManagement = () => {
     }
   };
 
-  const reassignLead = async (leadId: string, newUserId: string) => {
-    if (!isAdmin) return;
-
-    try {
-      const { error } = await supabase
-        .from('leads')
-        .update({ 
-          assigned_to: newUserId === 'unassign' ? null : newUserId,
-          status: newUserId === 'unassign' ? 'fresh' : 'in_progress',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', leadId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: newUserId === 'unassign' ? "Lead unassigned successfully" : "Lead reassigned successfully",
-      });
-
-      fetchLeads();
-    } catch (error) {
-      console.error('Error reassigning lead:', error);
-      toast({
-        title: "Error",
-        description: "Failed to reassign lead",
-        variant: "destructive",
-      });
-    }
-  };
-
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'fresh': return 'bg-green-100 text-green-800';
@@ -167,6 +134,27 @@ export const LeadsManagement = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleAddLead = () => {
+    toast({
+      title: "Feature Coming Soon",
+      description: "Add new lead functionality will be implemented next.",
+    });
+  };
+
+  const handleViewLead = (leadId: string) => {
+    toast({
+      title: "Feature Coming Soon",
+      description: "Lead detail view will be implemented next.",
+    });
+  };
+
+  const handleEditLead = (leadId: string) => {
+    toast({
+      title: "Feature Coming Soon",
+      description: "Lead editing functionality will be implemented next.",
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -192,7 +180,7 @@ export const LeadsManagement = () => {
             Export CSV
           </Button>
           {isAdmin && (
-            <Button>
+            <Button onClick={handleAddLead}>
               <Plus className="w-4 h-4 mr-2" />
               Add Lead
             </Button>
@@ -290,19 +278,20 @@ export const LeadsManagement = () => {
                     <TableCell>{new Date(lead.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleViewLead(lead.id)}
+                        >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        {isAdmin && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => reassignLead(lead.id, 'unassign')}
-                            title="Reassign Lead"
-                          >
-                            <Settings className="w-4 h-4" />
-                          </Button>
-                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleEditLead(lead.id)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
