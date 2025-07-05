@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { TargetProgress } from '@/components/TargetProgress';
 import { 
   Table,
   TableBody,
@@ -29,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Target, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface User {
@@ -39,6 +40,7 @@ interface User {
   role: 'admin' | 'sales_person';
   is_active: boolean;
   monthly_target: number;
+  current_month_achieved: number;
   created_at: string;
 }
 
@@ -99,6 +101,7 @@ export const UserManagement = () => {
           full_name: formData.full_name,
           role: formData.role,
           monthly_target: formData.monthly_target,
+          current_month_target: formData.monthly_target, // Also update current month target
           updated_at: new Date().toISOString(),
         };
 
@@ -126,6 +129,7 @@ export const UserManagement = () => {
             full_name: formData.full_name,
             role: formData.role,
             monthly_target: formData.monthly_target,
+            current_month_target: formData.monthly_target,
             password_hash: hashedPassword,
           }]);
 
@@ -170,7 +174,7 @@ export const UserManagement = () => {
   };
 
   const handleDelete = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm('Are you sure you want to deactivate this user?')) return;
 
     try {
       const { error } = await supabase
@@ -196,6 +200,29 @@ export const UserManagement = () => {
     }
   };
 
+  const exportReport = () => {
+    const salesPersons = users.filter(u => u.role === 'sales_person');
+    const csvContent = [
+      ['Name', 'Email', 'Monthly Target', 'Achieved', 'Achievement %', 'Status'],
+      ...salesPersons.map(user => [
+        user.full_name,
+        user.email,
+        user.monthly_target.toString(),
+        (user.current_month_achieved || 0).toString(),
+        user.monthly_target > 0 ? ((user.current_month_achieved || 0) / user.monthly_target * 100).toFixed(1) : '0',
+        user.is_active ? 'Active' : 'Inactive'
+      ])
+    ].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `targets-report-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   if (!isAdmin) {
     return (
       <div className="text-center py-12">
@@ -213,6 +240,8 @@ export const UserManagement = () => {
     );
   }
 
+  const salesPersons = users.filter(u => u.role === 'sales_person');
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -220,85 +249,109 @@ export const UserManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600">Manage admin and sales person accounts</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Add User
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editingUser ? 'Edit User' : 'Add New User'}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="full_name">Full Name</Label>
-                <Input
-                  id="full_name"
-                  value={formData.full_name}
-                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="role">Role</Label>
-                <Select 
-                  value={formData.role} 
-                  onValueChange={(value) => setFormData({ ...formData, role: value as 'admin' | 'sales_person' })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="sales_person">Sales Person</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="monthly_target">Monthly Target (₹)</Label>
-                <Input
-                  id="monthly_target"
-                  type="number"
-                  value={formData.monthly_target}
-                  onChange={(e) => setFormData({ ...formData, monthly_target: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="password">
-                  Password {editingUser && '(leave blank to keep current)'}
-                </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required={!editingUser}
-                />
-              </div>
-              <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">
-                  {editingUser ? 'Update' : 'Create'} User
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <div className="flex space-x-2">
+          <Button onClick={exportReport} variant="outline">
+            <Download className="w-4 h-4 mr-2" />
+            Export Report
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add User
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{editingUser ? 'Edit User' : 'Add New User'}</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="full_name">Full Name</Label>
+                  <Input
+                    id="full_name"
+                    value={formData.full_name}
+                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="role">Role</Label>
+                  <Select 
+                    value={formData.role} 
+                    onValueChange={(value) => setFormData({ ...formData, role: value as 'admin' | 'sales_person' })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="sales_person">Sales Person</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="monthly_target">Monthly Target (₹)</Label>
+                  <Input
+                    id="monthly_target"
+                    type="number"
+                    value={formData.monthly_target}
+                    onChange={(e) => setFormData({ ...formData, monthly_target: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="password">
+                    Password {editingUser && '(leave blank to keep current)'}
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    required={!editingUser}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">
+                    {editingUser ? 'Update' : 'Create'} User
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
+
+      {/* Sales Team Target Overview */}
+      {salesPersons.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Sales Team Performance</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {salesPersons.map((person) => (
+              <TargetProgress
+                key={person.id}
+                target={person.monthly_target || 0}
+                achieved={person.current_month_achieved || 0}
+                title={person.full_name}
+                showIcon={false}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       <Card>
         <CardHeader>
@@ -313,6 +366,7 @@ export const UserManagement = () => {
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Monthly Target</TableHead>
+                  <TableHead>Achievement</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead>Actions</TableHead>
@@ -327,6 +381,21 @@ export const UserManagement = () => {
                       {user.role.replace('_', ' ')}
                     </TableCell>
                     <TableCell>₹{user.monthly_target.toLocaleString()}</TableCell>
+                    <TableCell>
+                      {user.role === 'sales_person' ? (
+                        <div className="text-sm">
+                          <div>₹{(user.current_month_achieved || 0).toLocaleString()}</div>
+                          <div className="text-gray-500">
+                            {user.monthly_target > 0 
+                              ? `${Math.round(((user.current_month_achieved || 0) / user.monthly_target) * 100)}%`
+                              : 'N/A'
+                            }
+                          </div>
+                        </div>
+                      ) : (
+                        'N/A'
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge variant={user.is_active ? "default" : "secondary"}>
                         {user.is_active ? 'Active' : 'Inactive'}

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/table';
 import { UserPlus, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { LeadDetailModal } from '@/components/LeadDetailModal';
 import type { Database } from '@/integrations/supabase/types';
 
 type Lead = Database['public']['Tables']['leads']['Row'];
@@ -24,6 +25,8 @@ export const FreshLeadsSection = () => {
   const { toast } = useToast();
   const [freshLeads, setFreshLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
     if (isSalesPerson) {
@@ -86,6 +89,11 @@ export const FreshLeadsSection = () => {
     }
   };
 
+  const handleViewLead = (lead: Lead) => {
+    setSelectedLead(lead);
+    setShowDetailModal(true);
+  };
+
   if (!isSalesPerson || loading) {
     return null;
   }
@@ -104,57 +112,76 @@ export const FreshLeadsSection = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Fresh Leads Available for Claiming ({freshLeads.length})</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Lead ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Experience</TableHead>
-                <TableHead>Source</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {freshLeads.map((lead) => (
-                <TableRow key={lead.id}>
-                  <TableCell className="font-medium">{lead.lead_id}</TableCell>
-                  <TableCell>{lead.name}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{lead.email}</div>
-                      <div className="text-gray-500">{lead.phone}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{lead.experience || 'N/A'}</TableCell>
-                  <TableCell className="capitalize">{lead.lead_source.replace('_', ' ')}</TableCell>
-                  <TableCell>{new Date(lead.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => claimLead(lead.id)}
-                        className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
-                      >
-                        <UserPlus className="w-4 h-4 mr-1" />
-                        Claim
-                      </Button>
-                    </div>
-                  </TableCell>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Fresh Leads Available for Claiming ({freshLeads.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Lead ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Experience</TableHead>
+                  <TableHead>Source</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {freshLeads.map((lead) => (
+                  <TableRow key={lead.id}>
+                    <TableCell className="font-medium">{lead.lead_id}</TableCell>
+                    <TableCell>{lead.name}</TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div>{lead.email}</div>
+                        <div className="text-gray-500">{lead.phone}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{lead.experience || 'N/A'}</TableCell>
+                    <TableCell className="capitalize">{lead.lead_source.replace('_', ' ')}</TableCell>
+                    <TableCell>{new Date(lead.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleViewLead(lead)}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => claimLead(lead.id)}
+                          className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
+                        >
+                          <UserPlus className="w-4 h-4 mr-1" />
+                          Claim
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      <LeadDetailModal
+        lead={selectedLead}
+        isOpen={showDetailModal}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedLead(null);
+        }}
+        onUpdate={fetchFreshLeads}
+      />
+    </>
   );
 };

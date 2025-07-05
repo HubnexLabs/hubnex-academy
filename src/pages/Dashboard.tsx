@@ -1,15 +1,16 @@
+
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FreshLeadsSection } from '@/components/FreshLeadsSection';
 import { MyLeadsSection } from '@/components/MyLeadsSection';
+import { TargetProgress } from '@/components/TargetProgress';
 import { 
   Users, 
   UserCheck, 
   TrendingUp, 
   DollarSign,
-  Clock,
   Target
 } from 'lucide-react';
 
@@ -18,14 +19,12 @@ interface DashboardStats {
   freshLeads: number;
   totalSalesPersons: number;
   dealsClosedThisMonth: number;
-  dealsClosedThisWeek: number;
-  dealsClosedToday: number;
   revenueThisMonth: number;
-  revenueThisWeek: number;
-  revenueToday: number;
   projectedRevenue: number;
   myLeadsCount: number;
   unclaimedLeads: number;
+  monthlyTarget: number;
+  monthlyAchieved: number;
 }
 
 export const Dashboard = () => {
@@ -35,14 +34,12 @@ export const Dashboard = () => {
     freshLeads: 0,
     totalSalesPersons: 0,
     dealsClosedThisMonth: 0,
-    dealsClosedThisWeek: 0,
-    dealsClosedToday: 0,
     revenueThisMonth: 0,
-    revenueThisWeek: 0,
-    revenueToday: 0,
     projectedRevenue: 0,
     myLeadsCount: 0,
     unclaimedLeads: 0,
+    monthlyTarget: 0,
+    monthlyAchieved: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -54,6 +51,23 @@ export const Dashboard = () => {
     try {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      // Get user's current targets and achievements
+      if (user) {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('monthly_target, current_month_achieved')
+          .eq('id', user.id)
+          .single();
+
+        if (userData) {
+          setStats(prev => ({
+            ...prev,
+            monthlyTarget: userData.monthly_target || 0,
+            monthlyAchieved: userData.current_month_achieved || 0,
+          }));
+        }
+      }
 
       // Total leads (role-based filtering)
       const leadsQuery = supabase.from('leads').select('*', { count: 'exact' });
@@ -128,20 +142,17 @@ export const Dashboard = () => {
       const { data: pipelineLeads } = await pipelineQuery;
       const projectedRevenue = pipelineLeads?.reduce((sum, lead) => sum + (lead.deal_value || 0), 0) || 0;
 
-      setStats({
+      setStats(prev => ({
+        ...prev,
         totalLeads: totalLeads || 0,
         freshLeads: freshLeads || 0,
         totalSalesPersons,
         dealsClosedThisMonth: dealsClosedThisMonth || 0,
-        dealsClosedThisWeek: 0, // Simplified for now
-        dealsClosedToday: 0, // Simplified for now
         revenueThisMonth,
-        revenueThisWeek: 0, // Simplified for now
-        revenueToday: 0, // Simplified for now
         projectedRevenue,
         myLeadsCount,
         unclaimedLeads,
-      });
+      }));
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
@@ -167,6 +178,15 @@ export const Dashboard = () => {
           Here's an overview of your {isAdmin ? 'team\'s' : ''} performance
         </p>
       </div>
+
+      {/* Target Progress for Sales Person */}
+      {isSalesPerson && (
+        <TargetProgress 
+          target={stats.monthlyTarget}
+          achieved={stats.monthlyAchieved}
+          title="Monthly Sales Target"
+        />
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -226,7 +246,7 @@ export const Dashboard = () => {
           </>
         ) : (
           <>
-            {/* Admin stats - keep existing code */}
+            {/* Admin stats */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
@@ -303,33 +323,6 @@ export const Dashboard = () => {
           <FreshLeadsSection />
           <MyLeadsSection />
         </div>
-      )}
-
-      {/* Recent Activity for Admin */}
-      {isAdmin && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <Clock className="h-4 w-4 text-gray-400" />
-                <div>
-                  <p className="text-sm font-medium">New lead assigned</p>
-                  <p className="text-xs text-gray-500">2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <TrendingUp className="h-4 w-4 text-green-500" />
-                <div>
-                  <p className="text-sm font-medium">Deal closed - ₹50,000</p>
-                  <p className="text-xs text-gray-500">5 hours ago</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       )}
     </div>
   );

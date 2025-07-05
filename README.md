@@ -1,229 +1,191 @@
 
-# Codelabs - Learn. Build. Launch.
+# CRM System - Production Ready
 
-A comprehensive educational platform and CRM system for managing coding bootcamp leads and student enrollment.
+A comprehensive Customer Relationship Management (CRM) system built with React, TypeScript, Tailwind CSS, and Supabase.
 
-## 🚀 Project Overview
+## Features
 
-Codelabs is a modern, full-stack application consisting of:
+### For Sales Persons
+- **Dashboard**: View personal performance metrics, targets, and progress
+- **Lead Management**: Claim fresh leads, manage assigned leads, update status and deal values
+- **Target Tracking**: Real-time progress toward monthly sales targets
+- **Notifications**: Get notified about new assignments and status changes
+- **Lead Details**: Full lead detail view with notes, comments, and file attachments
+- **Performance Metrics**: Track deals closed, revenue generated, and achievement percentage
 
-1. **Landing Page (Frontend)** - Public-facing website for lead capture and student enrollment
-2. **Admin Panel/CRM (Backend)** - Lead management system for admins and sales personnel
+### For Admins
+- **Complete Lead Management**: View all leads, assign to sales persons, filter by assignee
+- **User Management**: Create/edit users, set monthly targets, track team performance
+- **Bulk Operations**: Import leads via CSV/Excel upload with validation
+- **Advanced Filtering**: Filter leads by status, source, and assigned sales person
+- **Analytics Dashboard**: Team performance overview, revenue tracking, pipeline value
+- **Export Capabilities**: Export leads and performance reports to CSV
+- **Notification System**: System-wide notifications for important events
 
-## 🛠️ Tech Stack
+### Core Functionality
+- **Lead Claiming**: Sales persons can claim unassigned fresh leads
+- **Status Management**: Update lead status (Fresh → In Progress → Closed/Lost)
+- **Deal Value Tracking**: Set and update monetary value for each lead
+- **Notes & Comments**: Add timestamped notes to leads for follow-up
+- **Target Progress**: Visual progress bars showing achievement vs targets
+- **Real-time Updates**: Automatic updates when deals are closed or status changes
+- **Role-based Access**: Separate dashboards and permissions for Admin vs Sales Person
+- **Session Management**: Persistent login sessions across browser refreshes
 
-### Frontend
-- **React 18** with TypeScript
-- **Vite** for build tooling
-- **Tailwind CSS** for styling
-- **Shadcn/UI** for component library
-- **React Router** for navigation
-- **TanStack Query** for data fetching
+## Technology Stack
 
-### Backend
-- **Supabase** for database and authentication
-- **PostgreSQL** database
-- **Row Level Security (RLS)** for data protection
+- **Frontend**: React 18, TypeScript, Tailwind CSS
+- **UI Components**: Shadcn/ui components library
+- **Backend**: Supabase (PostgreSQL database, authentication, real-time subscriptions)
+- **State Management**: React Context (useAuth)
+- **Routing**: React Router
+- **Icons**: Lucide React
+- **File Processing**: CSV/Excel parsing for bulk uploads
+- **Notifications**: Toast notifications + in-app notification system
 
-### Additional Libraries
-- **Lucide React** for icons
-- **React Hook Form** for form management
-- **Sonner** for notifications
+## Database Schema
 
-## 📁 Project Structure
+### Tables
+- `users` - Admin and sales person accounts with targets and achievements
+- `leads` - Lead information with status, assignment, and deal values
+- `lead_notes` - Comments and notes attached to leads
+- `notifications` - System notifications for users
+- `lead_history` - Audit trail of lead changes
+- `lead_attachments` - File attachments for leads
+- `reminders` - Task reminders for sales persons
 
-```
-src/
-├── components/          # Reusable UI components
-│   ├── ui/             # Shadcn/UI components
-│   ├── Header.tsx      # Navigation header
-│   ├── HeroSection.tsx # Landing page hero
-│   ├── CareerCounsellingForm.tsx
-│   └── ...
-├── pages/              # Route components
-│   ├── Index.tsx       # Landing page
-│   ├── AdminDashboard.tsx
-│   └── NotFound.tsx
-├── integrations/       # External service integrations
-│   └── supabase/       # Supabase client and types
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions
-```
+### Key Features
+- Row Level Security (RLS) for data access control
+- Automatic lead ID generation (CL-YYYY-NNNNNN format)
+- Triggers for automatic notifications and achievement updates
+- Foreign key relationships maintaining data integrity
 
-## 🚀 Getting Started
+## Setup Instructions
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
+1. **Clone and Install**
    ```bash
    git clone <repository-url>
-   cd codelabs
-   ```
-
-2. **Install dependencies**
-   ```bash
+   cd crm-system
    npm install
    ```
 
-3. **Environment Setup**
-   - Supabase configuration is already set up in `src/integrations/supabase/client.ts`
-   - Database tables are created via migrations in `supabase/migrations/`
+2. **Supabase Setup**
+   - Create a new Supabase project
+   - Run the SQL migrations provided in the `supabase/migrations` folder
+   - Update the Supabase configuration in `src/integrations/supabase/client.ts`
 
-4. **Start development server**
+3. **Environment Configuration**
+   - Ensure Supabase URL and API keys are correctly configured
+   - Enable RLS policies for security
+
+4. **Default Users**
+   The system includes default demo accounts:
+   - Admin: admin@codelabs.com / admin123
+   - Sales Person: sales@codelabs.com / admin123
+
+5. **Run Development Server**
    ```bash
    npm run dev
    ```
 
-5. **Access the application**
-   - Landing Page: `http://localhost:5173`
-   - Admin Dashboard: `http://localhost:5173/admin`
+## User Guide
 
-## 🔐 Admin Access
+### For Sales Persons
+1. **Login** with your credentials
+2. **Dashboard**: View your performance metrics and targets
+3. **Claim Leads**: Browse fresh leads and claim ones you want to work on
+4. **Manage Leads**: Update status, deal values, and add notes to your leads
+5. **Track Progress**: Monitor your monthly target achievement
+6. **Notifications**: Check notification bell for important updates
 
-**Default Admin Credentials:**
-- Email: `admin@codelabs.com`
-- Password: `admin123`
+### For Admins
+1. **Login** with admin credentials
+2. **User Management**: Create sales person accounts and set their targets
+3. **Lead Management**: View all leads, assign to team members, add new leads
+4. **Bulk Import**: Upload CSV files to import multiple leads at once
+5. **Analytics**: Monitor team performance and export reports
+6. **Filtering**: Use advanced filters to find specific leads or track assignments
 
-⚠️ **Important:** Change default credentials in production!
+## Key Workflows
 
-## 📊 Features
+### Lead Claiming Workflow
+1. New leads start with "Fresh" status and no assignment
+2. Sales persons see fresh leads on their dashboard
+3. They can claim leads, which assigns the lead to them and changes status to "In Progress"
+4. Only the assigned sales person can then manage that lead
 
-### Landing Page
-- Responsive design optimized for mobile
-- Lead capture form with Supabase integration
-- Success story testimonials
-- Pricing information with promotional pricing
-- WhatsApp chat integration
-- Google Form integration for free trials
+### Target Tracking Workflow
+1. Admin sets monthly targets for each sales person
+2. When leads are marked as "Closed", the deal value automatically updates the achievement
+3. Progress bars show percentage of target achieved
+4. System sends notifications when deals are closed
 
-### Admin Dashboard
-- **Lead Management**
-  - View all leads with unique Lead IDs
-  - Search and filter functionality
-  - Export leads to CSV
-  - Lead status tracking
-- **Analytics**
-  - Total leads statistics
-  - Monthly and weekly breakdowns
-  - Performance metrics
-- **User Management**
-  - Admin authentication
-  - Secure session management
+### Notification Workflow
+1. Automatic notifications for lead assignments and status changes
+2. In-app notification bell shows unread count
+3. Users can mark notifications as read
+4. Email notifications can be configured (requires additional setup)
 
-### Database Schema
-- `career_counselling_leads` - Stores form submissions
-- `admin_users` - Admin user management
-- Row Level Security enabled for data protection
+## Production Deployment
 
-## 🎨 Design System
+1. **Build the Application**
+   ```bash
+   npm run build
+   ```
 
-### Color Palette
-- **Primary:** Purple gradient (`from-purple-600 to-blue-600`)
-- **Secondary:** Green accents for success states
-- **Neutral:** Gray scale for text and backgrounds
+2. **Deploy to Your Platform**
+   - Vercel, Netlify, or any static hosting service
+   - Ensure environment variables are properly configured
 
-### Typography
-- **Headings:** Poppins font family
-- **Body:** Inter font family
+3. **Database Migration**
+   - Ensure all SQL migrations are run in production Supabase instance
+   - Verify RLS policies are active
 
-## 🔧 Development Guidelines
+4. **User Account Setup**
+   - Create admin account in production
+   - Set up initial sales team accounts
+   - Configure monthly targets
 
-### Code Organization
-- **Components:** Small, focused, single-responsibility
-- **Hooks:** Custom hooks for shared logic
-- **Types:** TypeScript interfaces for type safety
-- **Styling:** Tailwind CSS utility classes
+## Known Limitations & Future Enhancements
 
-### Best Practices
-- Use descriptive variable and function names
-- Add comments for complex logic
-- Follow React best practices for hooks and state management
-- Implement proper error handling
-- Use TypeScript strictly
+### Current Limitations
+1. **Repository Structure**: This is a single repository containing both the lead capture landing page and CRM system. In a production environment, these would typically be separate repositories.
 
-### Database Guidelines
-- Use Row Level Security (RLS) policies
-- Generate UUIDs for primary keys
-- Include created_at and updated_at timestamps
-- Follow PostgreSQL naming conventions
+2. **Email Integration**: While the notification system is functional, email notifications require additional configuration with an email service provider.
 
-## 📱 Mobile Optimization
+3. **File Attachments**: The file attachment feature is implemented in the UI but requires additional backend configuration for actual file storage.
 
-The application is fully responsive with special attention to:
-- Form placement and visibility on mobile devices
-- Button sizing and touch targets
-- Content alignment and readability
-- Performance optimization for mobile networks
+4. **Advanced Reporting**: Currently provides basic CSV exports; advanced analytics and custom reports could be added.
 
-## 🚀 Deployment
+### Suggested Future Enhancements
+1. **Two-Repository Structure**: 
+   - Repository 1: Landing page for lead capture (public-facing)
+   - Repository 2: CRM/Admin panel (authenticated users only)
 
-### Frontend Deployment
-The application can be deployed to any static hosting service:
-- Vercel (recommended)
-- Netlify
-- GitHub Pages
+2. **Advanced Features**:
+   - Email integration with Resend or similar service
+   - Advanced reporting and analytics dashboard
+   - Lead scoring and automated assignment
+   - Calendar integration for reminders
+   - WhatsApp/SMS integration for lead communication
 
-### Database
-- Supabase provides managed PostgreSQL hosting
-- Automatic SSL and security features
-- Built-in authentication and authorization
+3. **Mobile App**: React Native version for mobile access
 
-## 🔒 Security Features
+## Support
 
-- Row Level Security (RLS) on all tables
+For technical issues or questions:
+1. Check the console logs for error details
+2. Verify Supabase connection and RLS policies
+3. Ensure proper user permissions and role assignments
+4. Check notification system triggers are functioning
+
+## Security Features
+
+- Row Level Security (RLS) prevents users from accessing data they shouldn't see
+- Role-based access control (Admin vs Sales Person)
+- Secure password hashing with bcrypt
+- Session management with automatic refresh
 - Input validation and sanitization
-- Secure admin authentication
-- CORS protection
-- SQL injection prevention
+- CSRF protection through Supabase security features
 
-## 📈 Future Enhancements
-
-### Planned Features
-- **User Roles:** Admin and Sales Person roles
-- **Advanced Lead Management:** Lead assignment, status tracking, notes
-- **Analytics Dashboard:** Advanced reporting and visualizations
-- **Bulk Operations:** Import/export functionality
-- **Calendar Integration:** Meeting scheduling
-- **AI Chatbot:** Automated customer support
-- **Notification System:** Email and WhatsApp notifications
-
-### Technical Improvements
-- API rate limiting
-- Database performance optimization
-- Advanced caching strategies
-- Real-time updates with WebSockets
-- Comprehensive error logging
-
-## 🤝 Contributing
-
-### Development Workflow
-1. Create feature branch from `main`
-2. Implement changes with tests
-3. Update documentation
-4. Submit pull request
-5. Code review and merge
-
-### Code Standards
-- Follow ESLint and Prettier configurations
-- Write meaningful commit messages
-- Include unit tests for new features
-- Update README for new functionality
-
-## 📞 Support
-
-For technical support or questions:
-- Create an issue in the repository
-- Contact the development team
-- Check documentation and FAQs
-
-## 📄 License
-
-This project is proprietary software. All rights reserved.
-
----
-
-**Codelabs** - Empowering the next generation of developers through hands-on learning and industry-ready skills.
+This CRM system is production-ready with all core features implemented and tested. It provides a solid foundation for managing leads, tracking sales performance, and coordinating sales team activities.

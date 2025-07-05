@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Eye, Edit, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { LeadDetailModal } from '@/components/LeadDetailModal';
 import type { Database } from '@/integrations/supabase/types';
 
 type Lead = Database['public']['Tables']['leads']['Row'];
@@ -35,6 +36,8 @@ export const MyLeadsSection = () => {
   const [loading, setLoading] = useState(true);
   const [editingLead, setEditingLead] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<{[key: string]: any}>({});
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
     if (isSalesPerson && user) {
@@ -147,6 +150,11 @@ export const MyLeadsSection = () => {
     setEditValues({});
   };
 
+  const handleViewLead = (lead: Lead) => {
+    setSelectedLead(lead);
+    setShowDetailModal(true);
+  };
+
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'fresh': return 'bg-green-100 text-green-800';
@@ -175,106 +183,118 @@ export const MyLeadsSection = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>My Leads ({myLeads.length})</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Lead ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Experience</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Deal Value</TableHead>
-                <TableHead>Last Updated</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {myLeads.map((lead) => (
-                <TableRow key={lead.id}>
-                  <TableCell className="font-medium">{lead.lead_id}</TableCell>
-                  <TableCell>{lead.name}</TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{lead.email}</div>
-                      <div className="text-gray-500">{lead.phone}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {editingLead === lead.id ? (
-                      <Input
-                        value={editValues.experience}
-                        onChange={(e) => setEditValues(prev => ({...prev, experience: e.target.value}))}
-                        className="w-32"
-                      />
-                    ) : (
-                      lead.experience || 'N/A'
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Select 
-                      value={lead.status} 
-                      onValueChange={(value: LeadStatus) => updateLeadStatus(lead.id, value)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <Badge className={getStatusBadgeColor(lead.status)}>
-                          {lead.status.replace('_', ' ')}
-                        </Badge>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="closed">Closed</SelectItem>
-                        <SelectItem value="lost">Lost</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    {editingLead === lead.id ? (
-                      <Input
-                        type="number"
-                        value={editValues.deal_value}
-                        onChange={(e) => setEditValues(prev => ({...prev, deal_value: Number(e.target.value)}))}
-                        className="w-24"
-                      />
-                    ) : (
-                      `₹${(lead.deal_value || 0).toLocaleString()}`
-                    )}
-                  </TableCell>
-                  <TableCell>{new Date(lead.updated_at).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      {editingLead === lead.id ? (
-                        <>
-                          <Button variant="ghost" size="sm" onClick={() => handleSaveEdit(lead.id)}>
-                            <Save className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleEditLead(lead)}>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </TableCell>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>My Leads ({myLeads.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Lead ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Experience</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Deal Value</TableHead>
+                  <TableHead>Last Updated</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+              </TableHeader>
+              <TableBody>
+                {myLeads.map((lead) => (
+                  <TableRow key={lead.id}>
+                    <TableCell className="font-medium">{lead.lead_id}</TableCell>
+                    <TableCell>{lead.name}</TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div>{lead.email}</div>
+                        <div className="text-gray-500">{lead.phone}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {editingLead === lead.id ? (
+                        <Input
+                          value={editValues.experience}
+                          onChange={(e) => setEditValues(prev => ({...prev, experience: e.target.value}))}
+                          className="w-32"
+                        />
+                      ) : (
+                        lead.experience || 'N/A'
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Select 
+                        value={lead.status} 
+                        onValueChange={(value: LeadStatus) => updateLeadStatus(lead.id, value)}
+                      >
+                        <SelectTrigger className="w-32">
+                          <Badge className={getStatusBadgeColor(lead.status)}>
+                            {lead.status.replace('_', ' ')}
+                          </Badge>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="in_progress">In Progress</SelectItem>
+                          <SelectItem value="closed">Closed</SelectItem>
+                          <SelectItem value="lost">Lost</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      {editingLead === lead.id ? (
+                        <Input
+                          type="number"
+                          value={editValues.deal_value}
+                          onChange={(e) => setEditValues(prev => ({...prev, deal_value: Number(e.target.value)}))}
+                          className="w-24"
+                        />
+                      ) : (
+                        `₹${(lead.deal_value || 0).toLocaleString()}`
+                      )}
+                    </TableCell>
+                    <TableCell>{new Date(lead.updated_at).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        {editingLead === lead.id ? (
+                          <>
+                            <Button variant="ghost" size="sm" onClick={() => handleSaveEdit(lead.id)}>
+                              <Save className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button variant="ghost" size="sm" onClick={() => handleViewLead(lead)}>
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleEditLead(lead)}>
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      <LeadDetailModal
+        lead={selectedLead}
+        isOpen={showDetailModal}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedLead(null);
+        }}
+        onUpdate={fetchMyLeads}
+      />
+    </>
   );
 };

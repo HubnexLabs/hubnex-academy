@@ -26,32 +26,60 @@ import {
   Search, 
   Download,
   Eye,
-  Edit
+  Edit,
+  Upload
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { LeadDetailModal } from '@/components/LeadDetailModal';
+import { AddLeadModal } from '@/components/AddLeadModal';
+import { BulkUploadModal } from '@/components/BulkUploadModal';
 import type { Database } from '@/integrations/supabase/types';
 
-type Lead = Database['public']['Tables']['leads']['Row'];
+type Lead = Database['public']['Tables']['leads']['Row'] & {
+  assigned_user?: {
+    full_name: string;
+  };
+};
 type LeadStatus = Database['public']['Enums']['lead_status'];
 type LeadSource = Database['public']['Enums']['lead_source'];
+
+interface User {
+  id: string;
+  full_name: string;
+}
 
 export const LeadsManagement = () => {
   const { user, isAdmin, isSalesPerson } = useAuth();
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
+  const [assigneeFilter, setAssigneeFilter] = useState<string>('all');
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showBulkUploadModal, setShowBulkUploadModal] = useState(false);
 
   useEffect(() => {
     fetchLeads();
-  }, [user, statusFilter, sourceFilter]);
+    if (isAdmin) {
+      fetchUsers();
+    }
+  }, [user, statusFilter, sourceFilter, assigneeFilter]);
 
   const fetchLeads = async () => {
     try {
       console.log('Fetching leads with user:', user);
-      let query = supabase.from('leads').select('*').order('created_at', { ascending: false });
+      let query = supabase
+        .from('leads')
+        .select(`
+          *,
+          assigned_user:users(full_name)
+        `)
+        .order('created_at', { ascending: false });
 
       // Apply role-based filtering
       if (isSalesPerson && user) {
@@ -68,6 +96,15 @@ export const LeadsManagement = () => {
       // Apply source filter
       if (sourceFilter !== 'all') {
         query = query.eq('lead_source', sourceFilter as LeadSource);
+      }
+
+      // Apply assignee filter (admin only)
+      if (assigneeFilter !== 'all' && isAdmin) {
+        if (assigneeFilter === 'unassigned') {
+          query = query.is('assigned_to', null);
+        } else {
+          query = query.eq('assigned_to', assigneeFilter);
+        }
       }
 
       console.log('Executing query...');
@@ -92,6 +129,22 @@ export const LeadsManagement = () => {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, full_name')
+        .eq('role', 'sales_person')
+        .eq('is_active', true)
+        .order('full_name');
+
+      if (error) throw error;
+      setUsers(data || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
       case 'fresh': return 'bg-green-100 text-green-800';
@@ -111,7 +164,7 @@ export const LeadsManagement = () => {
 
   const exportLeads = () => {
     const csvContent = [
-      ['Lead ID', 'Name', 'Email', 'Phone', 'Experience', 'Source', 'Status', 'Deal Value', 'Created At'],
+      ['Lead ID', 'Name', 'Email', 'Phone', 'Experience', 'Source', 'Status', 'Deal Value', 'Assigned To', 'Created At'],
       ...filteredLeads.map(lead => [
         lead.lead_id,
         lead.name,
@@ -121,6 +174,7 @@ export const LeadsManagement = () => {
         lead.lead_source,
         lead.status,
         lead.deal_value?.toString() || '0',
+        lead.assigned_user?.full_name || 'Unassigned',
         new Date(lead.created_at).toLocaleDateString()
       ])
     ].map(row => row.join(',')).join('\n');
@@ -134,25 +188,14 @@ export const LeadsManagement = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  const handleAddLead = () => {
-    toast({
-      title: "Feature Coming Soon",
-      description: "Add new lead functionality will be implemented next.",
-    });
+  const handleViewLead = (lead: Lead) => {
+    setSelectedLead(lead);
+    setShowDetailModal(true);
   };
 
-  const handleViewLead = (leadId: string) => {
-    toast({
-      title: "Feature Coming Soon",
-      description: "Lead detail view will be implemented next.",
-    });
-  };
-
-  const handleEditLead = (leadId: string) => {
-    toast({
-      title: "Feature Coming Soon",
-      description: "Lead editing functionality will be implemented next.",
-    });
+  const handleEditLead = (lead: Lead) => {
+    setSelectedLead(lead);
+    setShowDetailModal(true);
   };
 
   if (loading) {
@@ -180,10 +223,16 @@ export const LeadsManagement = () => {
             Export CSV
           </Button>
           {isAdmin && (
-            <Button onClick={handleAddLead}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Lead
-            </Button>
+            <>
+              <Button onClick={() => setShowBulkUploadModal(true)} variant="outline">
+                <Upload className="w-4 h-4 mr-2" />
+                Bulk Upload
+              </Button>
+              <Button onClick={() => setShowAddModal(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Lead
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -229,6 +278,22 @@ export const LeadsManagement = () => {
                 <SelectItem value="email_campaign">Email Campaign</SelectItem>
               </SelectContent>
             </Select>
+            {isAdmin && (
+              <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Assigned To" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Assignees</SelectItem>
+                  <SelectItem value="unassigned">Unassigned</SelectItem>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.id}>
+                      {user.full_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -252,6 +317,7 @@ export const LeadsManagement = () => {
                   <TableHead>Source</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Deal Value</TableHead>
+                  {isAdmin && <TableHead>Assigned To</TableHead>}
                   <TableHead>Created</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -275,20 +341,25 @@ export const LeadsManagement = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>₹{(lead.deal_value || 0).toLocaleString()}</TableCell>
+                    {isAdmin && (
+                      <TableCell>
+                        {lead.assigned_user?.full_name || 'Unassigned'}
+                      </TableCell>
+                    )}
                     <TableCell>{new Date(lead.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => handleViewLead(lead.id)}
+                          onClick={() => handleViewLead(lead)}
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => handleEditLead(lead.id)}
+                          onClick={() => handleEditLead(lead)}
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -301,6 +372,29 @@ export const LeadsManagement = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modals */}
+      <LeadDetailModal
+        lead={selectedLead}
+        isOpen={showDetailModal}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedLead(null);
+        }}
+        onUpdate={fetchLeads}
+      />
+
+      <AddLeadModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSuccess={fetchLeads}
+      />
+
+      <BulkUploadModal
+        isOpen={showBulkUploadModal}
+        onClose={() => setShowBulkUploadModal(false)}
+        onSuccess={fetchLeads}
+      />
     </div>
   );
 };

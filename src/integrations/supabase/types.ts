@@ -232,6 +232,44 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          title: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reminders: {
         Row: {
           created_at: string
@@ -321,6 +359,8 @@ export type Database = {
       users: {
         Row: {
           created_at: string
+          current_month_achieved: number | null
+          current_month_target: number | null
           email: string
           full_name: string
           id: string
@@ -332,6 +372,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          current_month_achieved?: number | null
+          current_month_target?: number | null
           email: string
           full_name: string
           id?: string
@@ -343,6 +385,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          current_month_achieved?: number | null
+          current_month_target?: number | null
           email?: string
           full_name?: string
           id?: string
@@ -359,6 +403,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_notification: {
+        Args: {
+          p_user_id: string
+          p_title: string
+          p_message: string
+          p_type?: string
+        }
+        Returns: string
+      }
       generate_lead_id: {
         Args: Record<PropertyKey, never>
         Returns: string
