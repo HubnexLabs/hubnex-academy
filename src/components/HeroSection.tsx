@@ -6,21 +6,21 @@ import { CareerCounsellingForm } from "./CareerCounsellingForm";
 
 export const HeroSection = () => {
   return (
-    <section className="relative py-12 md:py-20 px-4 overflow-hidden font-inter">
+    <section className="relative py-8 md:py-12 lg:py-20 px-4 overflow-hidden font-inter">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
       <div className="container mx-auto relative z-10 max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left Content */}
-          <div className="space-y-6 md:space-y-8 order-2 lg:order-1">
+          <div className="space-y-6 md:space-y-8 order-1">
             <div className="space-y-4 md:space-y-6">
               <Badge className="bg-green-100 text-green-800 hover:bg-green-100 font-medium text-xs md:text-sm">
                 🎯 100% Placement Support
               </Badge>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight font-poppins">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight font-poppins">
                 Become <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Industry-Ready.</span><br />
                 Not Just Certified.
               </h1>
-              <p className="text-base md:text-lg lg:text-xl text-gray-600 leading-relaxed">
+              <p className="text-sm md:text-base lg:text-lg text-gray-600 leading-relaxed">
                 Work on real client projects, get mentored by IT leaders, and land your dream job with 100% placement support. Built by a real IT company, not an EdTech.
               </p>
             </div>
@@ -28,14 +28,21 @@ export const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-base md:text-lg px-6 md:px-8 py-4 md:py-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold w-full sm:w-auto"
+                onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
               >
                 Start Free 1-Week Trial
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-base md:text-lg px-6 md:px-8 py-4 md:py-6 font-semibold"
+                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 font-semibold w-full sm:w-auto"
+                onClick={() => {
+                  const form = document.querySelector('#career-counselling-form');
+                  if (form) {
+                    form.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
               >
                 See Success Stories
               </Button>
@@ -45,7 +52,13 @@ export const HeroSection = () => {
               <div className="flex items-center space-x-2">
                 <div className="flex -space-x-2">
                   {[1,2,3,4,5].map((i) => (
-                    <div key={i} className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full border-2 border-white"></div>
+                    <div key={i} className="w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-white overflow-hidden">
+                      <img 
+                        src={`https://images.unsplash.com/photo-${i === 1 ? '1507003211169-0a1dd7228f2d' : i === 2 ? '1494790108755-2616c18f129f' : i === 3 ? '1507591064344-4c6ce005b128' : i === 4 ? '1519085360753-af0119f7c3b6' : '1573497019940-1c28c88b4f3e'}?w=100&h=100&fit=crop&crop=face`}
+                        alt={`Student ${i}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   ))}
                 </div>
                 <span className="text-sm md:text-base text-gray-600 font-medium">1000+ Alumni Placed</span>
@@ -63,7 +76,7 @@ export const HeroSection = () => {
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-green-500" />
                   <div>
-                    <p className="font-bold text-gray-900 font-poppins text-lg">₹8.5L</p>
+                    <p className="font-bold text-gray-900 font-poppins text-lg">₹12.85L</p>
                     <p className="text-xs text-gray-600">Avg. Salary</p>
                   </div>
                 </div>
@@ -80,10 +93,15 @@ export const HeroSection = () => {
             </div>
           </div>
 
-          {/* Right Form */}
-          <div className="flex justify-center lg:justify-end order-1 lg:order-2">
+          {/* Right Form - Hidden on mobile, shown below content */}
+          <div className="hidden lg:flex justify-center lg:justify-end order-2">
             <CareerCounsellingForm />
           </div>
+        </div>
+
+        {/* Mobile Form - Shown below content on mobile */}
+        <div className="lg:hidden mt-8 flex justify-center">
+          <CareerCounsellingForm />
         </div>
       </div>
     </section>

@@ -5,11 +5,35 @@ import { useState } from "react";
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId) || document.querySelector(`[href="#${sectionId}"]`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMenuOpen(false);
+  };
+
+  const scrollToForm = () => {
+    const form = document.querySelector('#career-counselling-form');
+    if (form) {
+      form.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMenuOpen(false);
+  };
+
+  const scrollToHero = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-blue-100 font-inter">
       <div className="container mx-auto px-4 py-3 md:py-4 max-w-7xl">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <div 
+            className="flex items-center space-x-2 cursor-pointer"
+            onClick={scrollToHero}
+          >
             <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-base md:text-lg font-poppins">H</span>
             </div>
@@ -20,17 +44,44 @@ export const Header = () => {
           </div>
           
           <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-            <a href="#programs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base">Programs</a>
-            <a href="#success-stories" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base">Success Stories</a>
-            <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base">Pricing</a>
-            <a href="#faq" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base">FAQ</a>
+            <button 
+              onClick={() => scrollToSection('programs')} 
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base"
+            >
+              Programs
+            </button>
+            <button 
+              onClick={() => scrollToSection('success-stories')} 
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base"
+            >
+              Success Stories
+            </button>
+            <button 
+              onClick={() => scrollToSection('pricing')} 
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base"
+            >
+              Pricing
+            </button>
+            <button 
+              onClick={() => scrollToSection('faq')} 
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base"
+            >
+              FAQ
+            </button>
           </nav>
 
           <div className="hidden lg:flex items-center space-x-3 xl:space-x-4">
-            <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2">
+            <Button 
+              variant="outline" 
+              className="border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2"
+              onClick={scrollToForm}
+            >
               Talk to Counsellor
             </Button>
-            <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2">
+            <Button 
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2"
+              onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
+            >
               Start Free Trial
             </Button>
           </div>
@@ -50,15 +101,42 @@ export const Header = () => {
         {isMenuOpen && (
           <div className="lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
             <nav className="flex flex-col space-y-4">
-              <a href="#programs" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">Programs</a>
-              <a href="#success-stories" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">Success Stories</a>
-              <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">Pricing</a>
-              <a href="#faq" className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">FAQ</a>
+              <button 
+                onClick={() => scrollToSection('programs')} 
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm text-left"
+              >
+                Programs
+              </button>
+              <button 
+                onClick={() => scrollToSection('success-stories')} 
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm text-left"
+              >
+                Success Stories
+              </button>
+              <button 
+                onClick={() => scrollToSection('pricing')} 
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm text-left"
+              >
+                Pricing
+              </button>
+              <button 
+                onClick={() => scrollToSection('faq')} 
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm text-left"
+              >
+                FAQ
+              </button>
               <div className="flex flex-col space-y-2 pt-4">
-                <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm">
+                <Button 
+                  variant="outline" 
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm w-full"
+                  onClick={scrollToForm}
+                >
                   Talk to Counsellor
                 </Button>
-                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-semibold text-sm">
+                <Button 
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-semibold text-sm w-full"
+                  onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
+                >
                   Start Free Trial
                 </Button>
               </div>
