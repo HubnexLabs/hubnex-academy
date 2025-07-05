@@ -9,53 +9,347 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      admin_users: {
+      custom_fields: {
         Row: {
           created_at: string
-          email: string
+          created_by: string | null
+          field_name: string
+          field_type: string
           id: string
-          password_hash: string
+          is_required: boolean | null
+          options: Json | null
         }
         Insert: {
           created_at?: string
-          email: string
+          created_by?: string | null
+          field_name: string
+          field_type: string
           id?: string
-          password_hash: string
+          is_required?: boolean | null
+          options?: Json | null
         }
         Update: {
           created_at?: string
-          email?: string
+          created_by?: string | null
+          field_name?: string
+          field_type?: string
           id?: string
-          password_hash?: string
+          is_required?: boolean | null
+          options?: Json | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "custom_fields_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      career_counselling_leads: {
+      lead_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          lead_id: string | null
+          mime_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          lead_id?: string | null
+          mime_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          lead_id?: string | null
+          mime_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_attachments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_attachments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_history: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          lead_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          lead_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          lead_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_history_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_notes: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string | null
+          note: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          note: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          note?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_notes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          custom_data: Json | null
+          deal_value: number | null
+          email: string
+          experience: string | null
+          id: string
+          lead_id: string
+          lead_source: Database["public"]["Enums"]["lead_source"]
+          name: string
+          phone: string
+          status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          custom_data?: Json | null
+          deal_value?: number | null
+          email: string
+          experience?: string | null
+          id?: string
+          lead_id: string
+          lead_source: Database["public"]["Enums"]["lead_source"]
+          name: string
+          phone: string
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          custom_data?: Json | null
+          deal_value?: number | null
+          email?: string
+          experience?: string | null
+          id?: string
+          lead_id?: string
+          lead_source?: Database["public"]["Enums"]["lead_source"]
+          name?: string
+          phone?: string
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reminders: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_completed: boolean | null
+          lead_id: string | null
+          reminder_date: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_completed?: boolean | null
+          lead_id?: string | null
+          reminder_date: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_completed?: boolean | null
+          lead_id?: string | null
+          reminder_date?: string
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_targets: {
+        Row: {
+          achieved_amount: number | null
+          created_at: string
+          id: string
+          target_amount: number
+          target_month: number
+          target_year: number
+          user_id: string | null
+        }
+        Insert: {
+          achieved_amount?: number | null
+          created_at?: string
+          id?: string
+          target_amount: number
+          target_month: number
+          target_year: number
+          user_id?: string | null
+        }
+        Update: {
+          achieved_amount?: number | null
+          created_at?: string
+          id?: string
+          target_amount?: number
+          target_month?: number
+          target_year?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_targets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
         Row: {
           created_at: string
           email: string
-          experience: string
+          full_name: string
           id: string
-          name: string
-          phone: string
+          is_active: boolean
+          monthly_target: number | null
+          password_hash: string
+          role: Database["public"]["Enums"]["user_role"]
           updated_at: string
         }
         Insert: {
           created_at?: string
           email: string
-          experience: string
+          full_name: string
           id?: string
-          name: string
-          phone: string
+          is_active?: boolean
+          monthly_target?: number | null
+          password_hash: string
+          role: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
         Update: {
           created_at?: string
           email?: string
-          experience?: string
+          full_name?: string
           id?: string
-          name?: string
-          phone?: string
+          is_active?: boolean
+          monthly_target?: number | null
+          password_hash?: string
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
         Relationships: []
@@ -65,10 +359,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_lead_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      lead_source:
+        | "website"
+        | "referral"
+        | "social_media"
+        | "advertisement"
+        | "cold_call"
+        | "email_campaign"
+      lead_status: "fresh" | "in_progress" | "closed" | "lost"
+      user_role: "admin" | "sales_person"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -183,6 +488,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      lead_source: [
+        "website",
+        "referral",
+        "social_media",
+        "advertisement",
+        "cold_call",
+        "email_campaign",
+      ],
+      lead_status: ["fresh", "in_progress", "closed", "lost"],
+      user_role: ["admin", "sales_person"],
+    },
   },
 } as const

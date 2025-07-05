@@ -31,9 +31,18 @@ export const CareerCounsellingForm = () => {
     setIsSubmitting(true);
 
     try {
+      // Insert into the new leads table with proper structure
       const { error } = await supabase
-        .from('career_counselling_leads')
-        .insert([formData]);
+        .from('leads')
+        .insert([{
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          experience: formData.experience,
+          lead_source: 'website', // Set source as website since it's from the landing page
+          status: 'fresh',
+          deal_value: 0,
+        }]);
 
       if (error) {
         throw error;
