@@ -30,21 +30,11 @@ import {
   UserPlus
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import type { Database } from '@/integrations/supabase/types';
 
-interface Lead {
-  id: string;
-  lead_id: string;
-  name: string;
-  email: string;
-  phone: string;
-  experience: string;
-  lead_source: string;
-  status: 'fresh' | 'in_progress' | 'closed' | 'lost';
-  deal_value: number;
-  assigned_to: string | null;
-  created_at: string;
-  updated_at: string;
-}
+type Lead = Database['public']['Tables']['leads']['Row'];
+type LeadStatus = Database['public']['Enums']['lead_status'];
+type LeadSource = Database['public']['Enums']['lead_source'];
 
 export const LeadsManagement = () => {
   const { user, isAdmin } = useAuth();
@@ -70,12 +60,12 @@ export const LeadsManagement = () => {
 
       // Apply status filter
       if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
+        query = query.eq('status', statusFilter as LeadStatus);
       }
 
       // Apply source filter
       if (sourceFilter !== 'all') {
-        query = query.eq('lead_source', sourceFilter);
+        query = query.eq('lead_source', sourceFilter as LeadSource);
       }
 
       const { data, error } = await query;
@@ -103,7 +93,7 @@ export const LeadsManagement = () => {
         .from('leads')
         .update({ 
           assigned_to: user.id,
-          status: 'in_progress',
+          status: 'in_progress' as LeadStatus,
           updated_at: new Date().toISOString()
         })
         .eq('id', leadId);
@@ -154,7 +144,7 @@ export const LeadsManagement = () => {
         lead.experience || '',
         lead.lead_source,
         lead.status,
-        lead.deal_value.toString(),
+        lead.deal_value?.toString() || '0',
         new Date(lead.created_at).toLocaleDateString()
       ])
     ].map(row => row.join(',')).join('\n');
@@ -281,7 +271,7 @@ export const LeadsManagement = () => {
                         {lead.status.replace('_', ' ')}
                       </Badge>
                     </TableCell>
-                    <TableCell>₹{lead.deal_value.toLocaleString()}</TableCell>
+                    <TableCell>₹{(lead.deal_value || 0).toLocaleString()}</TableCell>
                     <TableCell>{new Date(lead.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
