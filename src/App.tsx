@@ -25,17 +25,27 @@ function App() {
           {/* Protected dashboard routes */}
           <Route path="/dashboard" element={
             <ProtectedRoute>
-              <DashboardLayout />
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
             </ProtectedRoute>
-          }>
-            <Route index element={<Dashboard />} />
-            <Route path="leads" element={<LeadsManagement />} />
-            <Route path="users" element={
-              <ProtectedRoute adminOnly>
+          } />
+          
+          <Route path="/leads" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <LeadsManagement />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/users" element={
+            <ProtectedRoute adminOnly>
+              <DashboardLayout>
                 <UserManagement />
-              </ProtectedRoute>
-            } />
-          </Route>
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
 
           {/* Legacy admin route redirect */}
           <Route path="/admin" element={<Navigate to="/login" replace />} />
