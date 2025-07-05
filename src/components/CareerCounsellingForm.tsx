@@ -14,6 +14,14 @@ export const CareerCounsellingForm = () => {
     experience: ''
   });
 
+  const experienceOptions = [
+    { value: "fresher", label: "Fresher (0-6 months)" },
+    { value: "junior", label: "Junior (6 months - 2 years)" },
+    { value: "mid", label: "Mid-level (2-5 years)" },
+    { value: "senior", label: "Senior (5+ years)" },
+    { value: "student", label: "Student (Final year/Recent graduate)" }
+  ];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
@@ -21,17 +29,17 @@ export const CareerCounsellingForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0">
-      <CardHeader className="text-center pb-4">
-        <CardTitle className="text-xl font-bold text-gray-900 font-poppins">
+    <Card className="w-full max-w-sm lg:max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0 mx-auto">
+      <CardHeader className="text-center pb-4 px-4 md:px-6 pt-4 md:pt-6">
+        <CardTitle className="text-lg md:text-xl font-bold text-gray-900 font-poppins">
           Book Free Career Counselling
         </CardTitle>
-        <p className="text-sm text-gray-600">Get personalized guidance from industry experts</p>
+        <p className="text-xs md:text-sm text-gray-600">Get personalized guidance from industry experts</p>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 px-4 md:px-6 pb-4 md:pb-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium text-gray-700">Name *</Label>
+            <Label htmlFor="name" className="text-xs md:text-sm font-medium text-gray-700">Name *</Label>
             <Input
               id="name"
               type="text"
@@ -39,12 +47,12 @@ export const CareerCounsellingForm = () => {
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
               required
-              className="border-gray-300 focus:border-blue-500"
+              className="border-gray-300 focus:border-blue-500 text-sm md:text-base h-10 md:h-11"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email *</Label>
+            <Label htmlFor="email" className="text-xs md:text-sm font-medium text-gray-700">Email *</Label>
             <Input
               id="email"
               type="email"
@@ -52,12 +60,12 @@ export const CareerCounsellingForm = () => {
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
               required
-              className="border-gray-300 focus:border-blue-500"
+              className="border-gray-300 focus:border-blue-500 text-sm md:text-base h-10 md:h-11"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone Number *</Label>
+            <Label htmlFor="phone" className="text-xs md:text-sm font-medium text-gray-700">Phone Number *</Label>
             <Input
               id="phone"
               type="tel"
@@ -65,53 +73,31 @@ export const CareerCounsellingForm = () => {
               value={formData.phone}
               onChange={(e) => setFormData({...formData, phone: e.target.value})}
               required
-              className="border-gray-300 focus:border-blue-500"
+              className="border-gray-300 focus:border-blue-500 text-sm md:text-base h-10 md:h-11"
             />
           </div>
 
           <div className="space-y-3">
-            <Label className="text-sm font-medium text-gray-700">Experience Level *</Label>
+            <Label className="text-xs md:text-sm font-medium text-gray-700">Experience Level *</Label>
             <RadioGroup
               value={formData.experience}
               onValueChange={(value) => setFormData({...formData, experience: value})}
               className="space-y-2"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="fresher" id="fresher" />
-                <Label htmlFor="fresher" className="text-sm text-gray-600 cursor-pointer">
-                  Fresher (0-6 months)
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="junior" id="junior" />
-                <Label htmlFor="junior" className="text-sm text-gray-600 cursor-pointer">
-                  Junior (6 months - 2 years)
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="mid" id="mid" />
-                <Label htmlFor="mid" className="text-sm text-gray-600 cursor-pointer">
-                  Mid-level (2-5 years)
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="senior" id="senior" />
-                <Label htmlFor="senior" className="text-sm text-gray-600 cursor-pointer">
-                  Senior (5+ years)
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="student" id="student" />
-                <Label htmlFor="student" className="text-sm text-gray-600 cursor-pointer">
-                  Student (Final year/Recent graduate)
-                </Label>
-              </div>
+              {experienceOptions.map((option) => (
+                <div key={option.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={option.value} className="w-4 h-4" />
+                  <Label htmlFor={option.value} className="text-xs md:text-sm text-gray-600 cursor-pointer leading-tight">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
             </RadioGroup>
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg shadow-lg transform transition hover:scale-105"
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 md:py-4 rounded-lg shadow-lg transform transition hover:scale-105 text-sm md:text-base"
           >
             Book Free Career Counselling
           </Button>
