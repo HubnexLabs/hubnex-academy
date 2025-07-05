@@ -1,73 +1,229 @@
-# Welcome to your Lovable project
 
-## Project info
+# Codelabs - Learn. Build. Launch.
 
-**URL**: https://lovable.dev/projects/bdf000d7-91f6-4708-8b7a-491b768be449
+A comprehensive educational platform and CRM system for managing coding bootcamp leads and student enrollment.
 
-## How can I edit this code?
+## 🚀 Project Overview
 
-There are several ways of editing your application.
+Codelabs is a modern, full-stack application consisting of:
 
-**Use Lovable**
+1. **Landing Page (Frontend)** - Public-facing website for lead capture and student enrollment
+2. **Admin Panel/CRM (Backend)** - Lead management system for admins and sales personnel
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/bdf000d7-91f6-4708-8b7a-491b768be449) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+### Frontend
+- **React 18** with TypeScript
+- **Vite** for build tooling
+- **Tailwind CSS** for styling
+- **Shadcn/UI** for component library
+- **React Router** for navigation
+- **TanStack Query** for data fetching
 
-**Use your preferred IDE**
+### Backend
+- **Supabase** for database and authentication
+- **PostgreSQL** database
+- **Row Level Security (RLS)** for data protection
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Additional Libraries
+- **Lucide React** for icons
+- **React Hook Form** for form management
+- **Sonner** for notifications
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 📁 Project Structure
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # Shadcn/UI components
+│   ├── Header.tsx      # Navigation header
+│   ├── HeroSection.tsx # Landing page hero
+│   ├── CareerCounsellingForm.tsx
+│   └── ...
+├── pages/              # Route components
+│   ├── Index.tsx       # Landing page
+│   ├── AdminDashboard.tsx
+│   └── NotFound.tsx
+├── integrations/       # External service integrations
+│   └── supabase/       # Supabase client and types
+├── hooks/              # Custom React hooks
+└── lib/                # Utility functions
 ```
 
-**Edit a file directly in GitHub**
+## 🚀 Getting Started
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-**Use GitHub Codespaces**
+### Installation
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd codelabs
+   ```
 
-## What technologies are used for this project?
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-This project is built with:
+3. **Environment Setup**
+   - Supabase configuration is already set up in `src/integrations/supabase/client.ts`
+   - Database tables are created via migrations in `supabase/migrations/`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-## How can I deploy this project?
+5. **Access the application**
+   - Landing Page: `http://localhost:5173`
+   - Admin Dashboard: `http://localhost:5173/admin`
 
-Simply open [Lovable](https://lovable.dev/projects/bdf000d7-91f6-4708-8b7a-491b768be449) and click on Share -> Publish.
+## 🔐 Admin Access
 
-## Can I connect a custom domain to my Lovable project?
+**Default Admin Credentials:**
+- Email: `admin@codelabs.com`
+- Password: `admin123`
 
-Yes, you can!
+⚠️ **Important:** Change default credentials in production!
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📊 Features
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Landing Page
+- Responsive design optimized for mobile
+- Lead capture form with Supabase integration
+- Success story testimonials
+- Pricing information with promotional pricing
+- WhatsApp chat integration
+- Google Form integration for free trials
+
+### Admin Dashboard
+- **Lead Management**
+  - View all leads with unique Lead IDs
+  - Search and filter functionality
+  - Export leads to CSV
+  - Lead status tracking
+- **Analytics**
+  - Total leads statistics
+  - Monthly and weekly breakdowns
+  - Performance metrics
+- **User Management**
+  - Admin authentication
+  - Secure session management
+
+### Database Schema
+- `career_counselling_leads` - Stores form submissions
+- `admin_users` - Admin user management
+- Row Level Security enabled for data protection
+
+## 🎨 Design System
+
+### Color Palette
+- **Primary:** Purple gradient (`from-purple-600 to-blue-600`)
+- **Secondary:** Green accents for success states
+- **Neutral:** Gray scale for text and backgrounds
+
+### Typography
+- **Headings:** Poppins font family
+- **Body:** Inter font family
+
+## 🔧 Development Guidelines
+
+### Code Organization
+- **Components:** Small, focused, single-responsibility
+- **Hooks:** Custom hooks for shared logic
+- **Types:** TypeScript interfaces for type safety
+- **Styling:** Tailwind CSS utility classes
+
+### Best Practices
+- Use descriptive variable and function names
+- Add comments for complex logic
+- Follow React best practices for hooks and state management
+- Implement proper error handling
+- Use TypeScript strictly
+
+### Database Guidelines
+- Use Row Level Security (RLS) policies
+- Generate UUIDs for primary keys
+- Include created_at and updated_at timestamps
+- Follow PostgreSQL naming conventions
+
+## 📱 Mobile Optimization
+
+The application is fully responsive with special attention to:
+- Form placement and visibility on mobile devices
+- Button sizing and touch targets
+- Content alignment and readability
+- Performance optimization for mobile networks
+
+## 🚀 Deployment
+
+### Frontend Deployment
+The application can be deployed to any static hosting service:
+- Vercel (recommended)
+- Netlify
+- GitHub Pages
+
+### Database
+- Supabase provides managed PostgreSQL hosting
+- Automatic SSL and security features
+- Built-in authentication and authorization
+
+## 🔒 Security Features
+
+- Row Level Security (RLS) on all tables
+- Input validation and sanitization
+- Secure admin authentication
+- CORS protection
+- SQL injection prevention
+
+## 📈 Future Enhancements
+
+### Planned Features
+- **User Roles:** Admin and Sales Person roles
+- **Advanced Lead Management:** Lead assignment, status tracking, notes
+- **Analytics Dashboard:** Advanced reporting and visualizations
+- **Bulk Operations:** Import/export functionality
+- **Calendar Integration:** Meeting scheduling
+- **AI Chatbot:** Automated customer support
+- **Notification System:** Email and WhatsApp notifications
+
+### Technical Improvements
+- API rate limiting
+- Database performance optimization
+- Advanced caching strategies
+- Real-time updates with WebSockets
+- Comprehensive error logging
+
+## 🤝 Contributing
+
+### Development Workflow
+1. Create feature branch from `main`
+2. Implement changes with tests
+3. Update documentation
+4. Submit pull request
+5. Code review and merge
+
+### Code Standards
+- Follow ESLint and Prettier configurations
+- Write meaningful commit messages
+- Include unit tests for new features
+- Update README for new functionality
+
+## 📞 Support
+
+For technical support or questions:
+- Create an issue in the repository
+- Contact the development team
+- Check documentation and FAQs
+
+## 📄 License
+
+This project is proprietary software. All rights reserved.
+
+---
+
+**Codelabs** - Empowering the next generation of developers through hands-on learning and industry-ready skills.

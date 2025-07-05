@@ -7,7 +7,7 @@ import { CareerCounsellingForm } from "./CareerCounsellingForm";
 export const HeroSection = () => {
   return (
     <section className="relative py-8 md:py-12 lg:py-20 px-4 overflow-hidden font-inter">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-blue-600/10"></div>
       <div className="container mx-auto relative z-10 max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left Content */}
@@ -17,7 +17,7 @@ export const HeroSection = () => {
                 🎯 100% Placement Support
               </Badge>
               <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight font-poppins">
-                Become <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Industry-Ready.</span><br />
+                Become <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Industry-Ready.</span><br />
                 Not Just Certified.
               </h1>
               <p className="text-sm md:text-base lg:text-lg text-gray-600 leading-relaxed">
@@ -28,7 +28,7 @@ export const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold w-full sm:w-auto"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold w-full sm:w-auto"
                 onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
               >
                 Start Free 1-Week Trial
@@ -36,7 +36,7 @@ export const HeroSection = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 font-semibold w-full sm:w-auto"
+                className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 font-semibold w-full sm:w-auto"
                 onClick={() => {
                   const form = document.querySelector('#career-counselling-form');
                   if (form) {
@@ -72,7 +72,7 @@ export const HeroSection = () => {
 
             {/* Mobile Stats Cards */}
             <div className="grid grid-cols-2 gap-4 pt-4 lg:hidden">
-              <div className="bg-white p-4 rounded-xl shadow-lg border border-blue-100">
+              <div className="bg-white p-4 rounded-xl shadow-lg border border-purple-100">
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-green-500" />
                   <div>
@@ -81,7 +81,7 @@ export const HeroSection = () => {
                   </div>
                 </div>
               </div>
-              <div className="bg-blue-600 text-white p-4 rounded-xl shadow-lg">
+              <div className="bg-purple-600 text-white p-4 rounded-xl shadow-lg">
                 <div className="flex items-center space-x-2">
                   <Users className="w-5 h-5" />
                   <div>

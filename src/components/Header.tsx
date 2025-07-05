@@ -34,37 +34,37 @@ export const Header = () => {
             className="flex items-center space-x-2 cursor-pointer"
             onClick={scrollToHero}
           >
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-base md:text-lg font-poppins">H</span>
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-base md:text-lg font-poppins">C</span>
             </div>
             <div>
-              <h1 className="text-lg md:text-xl font-bold text-gray-900 font-poppins">Hubnex Academy</h1>
-              <p className="text-xs text-gray-600">by Hubnex Labs</p>
+              <h1 className="text-lg md:text-xl font-bold text-gray-900 font-poppins">Codelabs</h1>
+              <p className="text-xs text-gray-600">Learn. Build. Launch.</p>
             </div>
           </div>
           
           <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
             <button 
               onClick={() => scrollToSection('programs')} 
-              className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base"
+              className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm xl:text-base"
             >
               Programs
             </button>
             <button 
               onClick={() => scrollToSection('success-stories')} 
-              className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base"
+              className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm xl:text-base"
             >
               Success Stories
             </button>
             <button 
               onClick={() => scrollToSection('pricing')} 
-              className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base"
+              className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm xl:text-base"
             >
               Pricing
             </button>
             <button 
               onClick={() => scrollToSection('faq')} 
-              className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm xl:text-base"
+              className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm xl:text-base"
             >
               FAQ
             </button>
@@ -73,13 +73,13 @@ export const Header = () => {
           <div className="hidden lg:flex items-center space-x-3 xl:space-x-4">
             <Button 
               variant="outline" 
-              className="border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2"
+              className="border-purple-600 text-purple-600 hover:bg-purple-50 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2"
               onClick={scrollToForm}
             >
               Talk to Counsellor
             </Button>
             <Button 
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2"
               onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
             >
               Start Free Trial
@@ -103,38 +103,38 @@ export const Header = () => {
             <nav className="flex flex-col space-y-4">
               <button 
                 onClick={() => scrollToSection('programs')} 
-                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm text-left"
+                className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm text-left"
               >
                 Programs
               </button>
               <button 
                 onClick={() => scrollToSection('success-stories')} 
-                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm text-left"
+                className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm text-left"
               >
                 Success Stories
               </button>
               <button 
                 onClick={() => scrollToSection('pricing')} 
-                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm text-left"
+                className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm text-left"
               >
                 Pricing
               </button>
               <button 
                 onClick={() => scrollToSection('faq')} 
-                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm text-left"
+                className="text-gray-700 hover:text-purple-600 transition-colors font-medium text-sm text-left"
               >
                 FAQ
               </button>
               <div className="flex flex-col space-y-2 pt-4">
                 <Button 
                   variant="outline" 
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm w-full"
+                  className="border-purple-600 text-purple-600 hover:bg-purple-50 font-semibold text-sm w-full"
                   onClick={scrollToForm}
                 >
                   Talk to Counsellor
                 </Button>
                 <Button 
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 font-semibold text-sm w-full"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold text-sm w-full"
                   onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
                 >
                   Start Free Trial

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Download, Eye, Users, Calendar, TrendingUp } from "lucide-react";
+import { Search, Download, Users, Calendar, TrendingUp, LogOut, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -69,7 +69,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     
     // Simple authentication - in production, use proper authentication
-    if (loginData.email === "admin@hubnexacademy.com" && loginData.password === "admin123") {
+    if (loginData.email === "admin@codelabs.com" && loginData.password === "admin123") {
       setIsAuthenticated(true);
       toast({
         title: "Success",
@@ -86,8 +86,9 @@ const AdminDashboard = () => {
 
   const exportLeads = () => {
     const csvContent = [
-      ['Name', 'Email', 'Phone', 'Experience', 'Date'],
+      ['Lead ID', 'Name', 'Email', 'Phone', 'Experience', 'Date'],
       ...filteredLeads.map(lead => [
+        lead.id.slice(0, 8),
         lead.name,
         lead.email,
         lead.phone,
@@ -100,7 +101,7 @@ const AdminDashboard = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'career_counselling_leads.csv';
+    a.download = 'codelabs_leads.csv';
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -121,7 +122,7 @@ const AdminDashboard = () => {
       title: "Total Leads",
       value: leads.length,
       icon: Users,
-      color: "text-blue-600"
+      color: "text-purple-600"
     },
     {
       title: "This Month",
@@ -143,15 +144,24 @@ const AdminDashboard = () => {
         return leadDate >= oneWeekAgo;
       }).length,
       icon: TrendingUp,
-      color: "text-purple-600"
+      color: "text-blue-600"
     }
   ];
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg font-poppins">C</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 font-poppins">Codelabs</h1>
+                <p className="text-xs text-gray-600">Admin Panel</p>
+              </div>
+            </div>
             <CardTitle className="text-2xl font-bold text-gray-900">Admin Login</CardTitle>
             <CardDescription>Access the admin dashboard</CardDescription>
           </CardHeader>
@@ -175,7 +185,7 @@ const AdminDashboard = () => {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                 Login to Dashboard
               </Button>
             </form>
@@ -186,20 +196,35 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600">Manage career counselling leads</p>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg font-poppins">C</span>
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 font-poppins">Codelabs</h1>
+                <p className="text-gray-600">Admin Dashboard</p>
+              </div>
+            </div>
           </div>
-          <Button
-            onClick={() => setIsAuthenticated(false)}
-            variant="outline"
-          >
-            Logout
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+            <Button
+              onClick={() => setIsAuthenticated(false)}
+              variant="outline"
+              size="sm"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -219,7 +244,7 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        {/* Filters and Actions */}
+        {/* Leads Management */}
         <Card>
           <CardHeader>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -256,6 +281,7 @@ const AdminDashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>Lead ID</TableHead>
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Phone</TableHead>
@@ -266,6 +292,7 @@ const AdminDashboard = () => {
                   <TableBody>
                     {filteredLeads.map((lead) => (
                       <TableRow key={lead.id}>
+                        <TableCell className="font-mono text-xs">{lead.id.slice(0, 8)}</TableCell>
                         <TableCell className="font-medium">{lead.name}</TableCell>
                         <TableCell>{lead.email}</TableCell>
                         <TableCell>{lead.phone}</TableCell>

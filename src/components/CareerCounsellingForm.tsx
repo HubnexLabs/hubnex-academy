@@ -89,7 +89,7 @@ export const CareerCounsellingForm = () => {
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
               required
-              className="border-gray-300 focus:border-blue-500 text-sm md:text-base h-10 md:h-11"
+              className="border-gray-300 focus:border-purple-500 text-sm md:text-base h-10 md:h-11"
             />
           </div>
 
@@ -102,7 +102,7 @@ export const CareerCounsellingForm = () => {
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
               required
-              className="border-gray-300 focus:border-blue-500 text-sm md:text-base h-10 md:h-11"
+              className="border-gray-300 focus:border-purple-500 text-sm md:text-base h-10 md:h-11"
             />
           </div>
 
@@ -115,7 +115,7 @@ export const CareerCounsellingForm = () => {
               value={formData.phone}
               onChange={(e) => setFormData({...formData, phone: e.target.value})}
               required
-              className="border-gray-300 focus:border-blue-500 text-sm md:text-base h-10 md:h-11"
+              className="border-gray-300 focus:border-purple-500 text-sm md:text-base h-10 md:h-11"
             />
           </div>
 
@@ -140,7 +140,7 @@ export const CareerCounsellingForm = () => {
           <Button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 md:py-4 rounded-lg shadow-lg transform transition hover:scale-105 text-sm md:text-base"
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 md:py-4 rounded-lg shadow-lg transform transition hover:scale-105 text-sm md:text-base"
           >
             {isSubmitting ? 'Submitting...' : 'Book Free Career Counselling'}
           </Button>
