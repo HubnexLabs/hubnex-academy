@@ -51,6 +51,7 @@ export const LeadsManagement = () => {
 
   const fetchLeads = async () => {
     try {
+      console.log('Fetching leads with user:', user);
       let query = supabase.from('leads').select('*').order('created_at', { ascending: false });
 
       // Apply role-based filtering
@@ -68,10 +69,15 @@ export const LeadsManagement = () => {
         query = query.eq('lead_source', sourceFilter as LeadSource);
       }
 
+      console.log('Executing query...');
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error('Query error:', error);
+        throw error;
+      }
 
+      console.log('Fetched leads:', data);
       setLeads(data || []);
     } catch (error) {
       console.error('Error fetching leads:', error);
