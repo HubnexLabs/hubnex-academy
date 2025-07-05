@@ -200,7 +200,7 @@ export type Database = {
           email: string
           experience?: string | null
           id?: string
-          lead_id: string
+          lead_id?: string
           lead_source: Database["public"]["Enums"]["lead_source"]
           name: string
           phone: string
