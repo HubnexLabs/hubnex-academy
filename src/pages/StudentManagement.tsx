@@ -639,7 +639,7 @@ export const StudentManagement = () => {
                         'Not assigned'
                       )}
                     </TableCell>
-                    <TableCell>{new Date(student.enrollment_date).toLocalDateString()}</TableCell>
+                    <TableCell>{new Date(student.enrollment_date).toLocaleDateString()}</TableCell>
                     <TableCell>{student.package_plan_name || 'N/A'}</TableCell>
                     <TableCell>
                       <Badge variant={student.is_active ? "default" : "secondary"}>
