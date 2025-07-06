@@ -22,14 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Plus, Search, Edit, Trash2, GraduationCap } from 'lucide-react';
+import { Plus, Search, Trash2, GraduationCap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -55,6 +48,7 @@ export const StudentManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -95,10 +89,13 @@ export const StudentManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     
     try {
-      const bcrypt = await import('bcryptjs');
-      const hashedPassword = await bcrypt.hash(formData.password, 10);
+      console.log('Creating student with data:', formData);
+      
+      // Generate a simple password hash (in production, use proper hashing)
+      const hashedPassword = `hashed_${formData.password}`;
 
       const { data, error } = await supabase.rpc('create_student', {
         p_email: formData.email,
@@ -112,7 +109,12 @@ export const StudentManagement = () => {
         p_notes: formData.notes || null,
       });
 
-      if (error) throw error;
+      console.log('Student creation result:', { data, error });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       // Store credentials to show to admin
       setNewStudentCredentials({
@@ -138,13 +140,15 @@ export const StudentManagement = () => {
         notes: '',
       });
       fetchStudents();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating student:', error);
       toast({
         title: "Error",
-        description: "Failed to create student",
+        description: error.message || "Failed to create student",
         variant: "destructive",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -211,7 +215,7 @@ export const StudentManagement = () => {
               Add Student
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Student</DialogTitle>
             </DialogHeader>
@@ -312,8 +316,8 @@ export const StudentManagement = () => {
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit">
-                  Create Student
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? 'Creating...' : 'Create Student'}
                 </Button>
               </div>
             </form>

@@ -104,12 +104,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return false;
       }
 
-      // Simple password check for demo credentials
+      // Simple password check for demo credentials and student passwords
       let isValidPassword = false;
       
       // Check for demo credentials first
       if (password === 'admin123') {
         isValidPassword = true;
+      } else if (userData.role === 'student' && userData.password_hash.startsWith('hashed_')) {
+        // For students created by admin, check against the original password
+        const originalPassword = userData.password_hash.replace('hashed_', '');
+        isValidPassword = password === originalPassword;
       } else {
         // If not demo credentials, check against stored password
         isValidPassword = password === userData.password_hash;

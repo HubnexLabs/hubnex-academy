@@ -1,5 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -75,8 +77,16 @@ export const Header = () => {
             >
               Talk to Counsellor
             </Button>
+            <Link to="/student-login">
+              <Button 
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2"
+              >
+                Login
+              </Button>
+            </Link>
             <Button 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2"
+              variant="outline"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold text-xs xl:text-sm px-3 xl:px-4 py-2 text-white border-0"
               onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
             >
               Start Free Trial
@@ -130,8 +140,16 @@ export const Header = () => {
                 >
                   Talk to Counsellor
                 </Button>
+                <Link to="/student-login" className="w-full">
+                  <Button 
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold text-sm w-full"
+                  >
+                    Login
+                  </Button>
+                </Link>
                 <Button 
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold text-sm w-full"
+                  variant="outline"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 font-semibold text-sm w-full text-white border-0"
                   onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
                 >
                   Start Free Trial
