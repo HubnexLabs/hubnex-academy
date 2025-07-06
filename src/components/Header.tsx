@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -34,13 +33,11 @@ export const Header = () => {
             className="flex items-center space-x-2 cursor-pointer"
             onClick={scrollToHero}
           >
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-base md:text-lg font-poppins">C</span>
-            </div>
-            <div>
-              <h1 className="text-lg md:text-xl font-bold text-gray-900 font-poppins">Codelabs</h1>
-              <p className="text-xs text-gray-600">Learn. Build. Launch.</p>
-            </div>
+            <img 
+              src="/lovable-uploads/96a0b522-6108-4d8a-bb9d-5f3b330edeec.png" 
+              alt="Codelabs Logo" 
+              className="h-8 md:h-10 w-auto"
+            />
           </div>
           
           <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
