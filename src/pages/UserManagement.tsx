@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,7 +36,7 @@ interface User {
   id: string;
   email: string;
   full_name: string;
-  role: 'admin' | 'sales_person';
+  role: 'admin' | 'sales_person' | 'student';
   is_active: boolean;
   monthly_target: number;
   current_month_achieved: number;
@@ -70,6 +69,7 @@ export const UserManagement = () => {
       const { data, error } = await supabase
         .from('users')
         .select('*')
+        .neq('role', 'student')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -166,7 +166,7 @@ export const UserManagement = () => {
     setFormData({
       email: user.email,
       full_name: user.full_name,
-      role: user.role,
+      role: user.role as 'admin' | 'sales_person',
       monthly_target: user.monthly_target,
       password: '',
     });

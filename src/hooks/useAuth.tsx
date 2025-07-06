@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -6,7 +7,7 @@ interface User {
   id: string;
   email: string;
   full_name: string;
-  role: 'admin' | 'sales_person';
+  role: 'admin' | 'sales_person' | 'student';
   monthly_target?: number;
 }
 
