@@ -14,28 +14,12 @@ import { GuaranteeSection } from "@/components/GuaranteeSection";
 import { FinalCTASection } from "@/components/FinalCTASection";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Link } from "react-router-dom";
-import { GraduationCap } from "lucide-react";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Header />
       
-      {/* Login Section */}
-      <section className="py-8 bg-white/80 backdrop-blur-sm border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center">
-            <Link to="/student-login">
-              <Button className="flex items-center space-x-2" size="lg">
-                <GraduationCap className="w-5 h-5" />
-                <span>Student Login</span>
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
       <main>
         <HeroSection />
         <BenefitsSection />

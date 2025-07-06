@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { LogOut, User, BookOpen, Calendar, Phone, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface StudentProfile {
   id: string;
@@ -26,6 +26,7 @@ interface StudentProfile {
 export const StudentDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,27 +38,61 @@ export const StudentDashboard = () => {
 
   const fetchProfile = async () => {
     try {
-      const { data, error } = await supabase
-        .from('students')
-        .select(`
-          *,
-          users!inner(email, full_name, is_active)
-        `)
-        .eq('user_id', user?.id)
-        .single();
+      console.log('Fetching profile for user:', user?.id);
+      
+      // First try to get the student profile using the RPC function
+      const { data: rpcData, error: rpcError } = await supabase.rpc('get_students_with_details');
+      
+      if (rpcError) {
+        console.error('RPC Error:', rpcError);
+        throw rpcError;
+      }
 
-      if (error) throw error;
+      console.log('RPC Data:', rpcData);
 
-      const studentProfile = {
-        ...data,
-        email: data.users.email,
-        full_name: data.users.full_name,
-        is_active: data.users.is_active,
-      };
+      // Find the student profile for the current user
+      const studentProfile = rpcData?.find((student: any) => student.user_id === user?.id);
 
-      setProfile(studentProfile);
-    } catch (error) {
+      if (!studentProfile) {
+        console.log('No student profile found for user:', user?.id);
+        console.log('Available student profiles:', rpcData);
+        
+        // Try direct query as fallback
+        const { data: directData, error: directError } = await supabase
+          .from('students')
+          .select(`
+            *,
+            users!inner(email, full_name, is_active)
+          `)
+          .eq('user_id', user?.id)
+          .single();
+
+        if (directError) {
+          console.error('Direct query error:', directError);
+          throw new Error('Student profile not found. Please contact your administrator.');
+        }
+
+        if (directData) {
+          const formattedProfile = {
+            ...directData,
+            email: directData.users.email,
+            full_name: directData.users.full_name,
+            is_active: directData.users.is_active,
+          };
+          setProfile(formattedProfile);
+        } else {
+          throw new Error('Student profile not found. Please contact your administrator.');
+        }
+      } else {
+        setProfile(studentProfile);
+      }
+    } catch (error: any) {
       console.error('Error fetching profile:', error);
+      toast({
+        title: "Profile Error",
+        description: error.message || "Failed to load student profile",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -82,7 +117,12 @@ export const StudentDashboard = () => {
         <Card className="w-full max-w-md">
           <CardContent className="p-6 text-center">
             <h2 className="text-xl font-semibold mb-2">Profile Not Found</h2>
-            <p className="text-gray-600 mb-4">Unable to load your student profile.</p>
+            <p className="text-gray-600 mb-4">
+              Your student profile could not be loaded. This might be because your account is still being set up or there was an issue with your registration.
+            </p>
+            <p className="text-gray-600 mb-4">
+              Please contact your counsellor or administrator for assistance.
+            </p>
             <Button onClick={handleLogout}>Back to Home</Button>
           </CardContent>
         </Card>

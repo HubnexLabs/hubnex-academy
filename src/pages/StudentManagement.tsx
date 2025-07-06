@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -98,21 +97,27 @@ export const StudentManagement = () => {
       const hashedPassword = `hashed_${formData.password}`;
 
       const { data, error } = await supabase.rpc('create_student', {
-        p_email: formData.email,
+        p_email: formData.email.trim(),
         p_password: hashedPassword,
-        p_full_name: formData.full_name,
-        p_phone_number: formData.phone_number || null,
+        p_full_name: formData.full_name.trim(),
+        p_phone_number: formData.phone_number.trim() || null,
         p_enrollment_date: formData.enrollment_date,
-        p_package_plan_name: formData.package_plan_name || null,
-        p_plan_details: formData.plan_details || null,
-        p_counsellor_name: formData.counsellor_name || null,
-        p_notes: formData.notes || null,
+        p_package_plan_name: formData.package_plan_name.trim() || null,
+        p_plan_details: formData.plan_details.trim() || null,
+        p_counsellor_name: formData.counsellor_name.trim() || null,
+        p_notes: formData.notes.trim() || null,
       });
 
       console.log('Student creation result:', { data, error });
 
       if (error) {
         console.error('Supabase error:', error);
+        
+        // Handle specific error cases
+        if (error.code === '23505') {
+          throw new Error('A user with this email already exists.');
+        }
+        
         throw error;
       }
 
@@ -124,10 +129,10 @@ export const StudentManagement = () => {
 
       toast({
         title: "Success",
-        description: "Student created successfully",
+        description: `Student ${formData.full_name} created successfully`,
       });
 
-      setDialogOpen(false);
+      // Reset form
       setFormData({
         email: '',
         password: '',
@@ -139,12 +144,17 @@ export const StudentManagement = () => {
         counsellor_name: '',
         notes: '',
       });
-      fetchStudents();
+      
+      setDialogOpen(false);
+      
+      // Refresh the students list
+      await fetchStudents();
+      
     } catch (error: any) {
       console.error('Error creating student:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to create student",
+        description: error.message || "Failed to create student. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -229,6 +239,7 @@ export const StudentManagement = () => {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
+                    placeholder="student@example.com"
                   />
                 </div>
                 <div>
@@ -239,6 +250,8 @@ export const StudentManagement = () => {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     required
+                    placeholder="Minimum 6 characters"
+                    minLength={6}
                   />
                 </div>
               </div>
@@ -250,6 +263,7 @@ export const StudentManagement = () => {
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                   required
+                  placeholder="John Doe"
                 />
               </div>
 
@@ -260,6 +274,7 @@ export const StudentManagement = () => {
                     id="phone_number"
                     value={formData.phone_number}
                     onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+                    placeholder="+1 234 567 8900"
                   />
                 </div>
                 <div>
@@ -280,6 +295,7 @@ export const StudentManagement = () => {
                     id="package_plan_name"
                     value={formData.package_plan_name}
                     onChange={(e) => setFormData({ ...formData, package_plan_name: e.target.value })}
+                    placeholder="Full Stack Web Development"
                   />
                 </div>
                 <div>
@@ -288,6 +304,7 @@ export const StudentManagement = () => {
                     id="counsellor_name"
                     value={formData.counsellor_name}
                     onChange={(e) => setFormData({ ...formData, counsellor_name: e.target.value })}
+                    placeholder="Jane Smith"
                   />
                 </div>
               </div>
@@ -299,6 +316,7 @@ export const StudentManagement = () => {
                   value={formData.plan_details}
                   onChange={(e) => setFormData({ ...formData, plan_details: e.target.value })}
                   rows={3}
+                  placeholder="Describe the course plan and curriculum..."
                 />
               </div>
 
@@ -309,6 +327,7 @@ export const StudentManagement = () => {
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}
+                  placeholder="Any additional notes about the student..."
                 />
               </div>
 
