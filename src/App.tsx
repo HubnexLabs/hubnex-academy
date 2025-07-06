@@ -10,6 +10,7 @@ import { Dashboard } from '@/pages/Dashboard';
 import { LeadsManagement } from '@/pages/LeadsManagement';
 import { UserManagement } from '@/pages/UserManagement';
 import { StudentManagement } from '@/pages/StudentManagement';
+import { Login } from '@/pages/Login';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -25,7 +26,7 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
   }
 
   if (!user) {
-    return <Navigate to="/student-login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
@@ -35,7 +36,7 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
   return <>{children}</>;
 };
 
-const AppRoutes = () => {
+const ThemedRoutes = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -51,47 +52,69 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/student-login" element={<StudentLogin />} />
-      
+      {/* Admin Panel Routes - with Theme Provider */}
+      <Route path="/admin" element={
+        <ProtectedRoute allowedRoles={['admin']}>
+          <ThemeProvider defaultTheme="system" storageKey="admin-theme">
+            <DashboardLayout>
+              <Dashboard />
+            </DashboardLayout>
+          </ThemeProvider>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin/leads" element={
+        <ProtectedRoute allowedRoles={['admin', 'sales_person']}>
+          <ThemeProvider defaultTheme="system" storageKey="admin-theme">
+            <DashboardLayout>
+              <LeadsManagement />
+            </DashboardLayout>
+          </ThemeProvider>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin/users" element={
+        <ProtectedRoute allowedRoles={['admin']}>
+          <ThemeProvider defaultTheme="system" storageKey="admin-theme">
+            <DashboardLayout>
+              <UserManagement />
+            </DashboardLayout>
+          </ThemeProvider>
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin/students" element={
+        <ProtectedRoute allowedRoles={['admin']}>
+          <ThemeProvider defaultTheme="system" storageKey="admin-theme">
+            <DashboardLayout>
+              <StudentManagement />
+            </DashboardLayout>
+          </ThemeProvider>
+        </ProtectedRoute>
+      } />
+
+      {/* Legacy dashboard routes - redirect to admin */}
+      <Route path="/dashboard" element={<Navigate to="/admin" replace />} />
+      <Route path="/leads" element={<Navigate to="/admin/leads" replace />} />
+      <Route path="/users" element={<Navigate to="/admin/users" replace />} />
+      <Route path="/students" element={<Navigate to="/admin/students" replace />} />
+
+      {/* Student Panel Routes - with Theme Provider */}
       <Route path="/student-dashboard" element={
         <ProtectedRoute allowedRoles={['student']}>
-          <StudentDashboard />
+          <ThemeProvider defaultTheme="system" storageKey="student-theme">
+            <StudentDashboard />
+          </ThemeProvider>
         </ProtectedRoute>
       } />
 
-      <Route path="/dashboard" element={
-        <ProtectedRoute allowedRoles={['admin', 'sales_person']}>
-          <DashboardLayout>
-            <Dashboard />
-          </DashboardLayout>
-        </ProtectedRoute>
-      } />
+      {/* Auth Routes - No Theme Provider (Light Only) */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/student-login" element={<StudentLogin />} />
 
-      <Route path="/leads" element={
-        <ProtectedRoute allowedRoles={['admin', 'sales_person']}>
-          <DashboardLayout>
-            <LeadsManagement />
-          </DashboardLayout>
-        </ProtectedRoute>
-      } />
-
-      <Route path="/users" element={
-        <ProtectedRoute allowedRoles={['admin']}>
-          <DashboardLayout>
-            <UserManagement />
-          </DashboardLayout>
-        </ProtectedRoute>
-      } />
-
-      <Route path="/students" element={
-        <ProtectedRoute allowedRoles={['admin']}>
-          <DashboardLayout>
-            <StudentManagement />
-          </DashboardLayout>
-        </ProtectedRoute>
-      } />
-
+      {/* Public Routes - No Theme Provider (Light Only) */}
+      <Route path="/" element={<Index />} />
+      
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -99,14 +122,12 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="codelabs-theme">
-      <AuthProvider>
-        <Router>
-          <AppRoutes />
-          <Toaster />
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <Router>
+        <ThemedRoutes />
+        <Toaster />
+      </Router>
+    </AuthProvider>
   );
 }
 

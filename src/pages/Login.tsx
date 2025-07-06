@@ -22,7 +22,7 @@ export const Login = () => {
 
     const success = await login(email, password, role);
     if (success) {
-      navigate('/dashboard');
+      navigate('/admin');
     }
 
     setLoading(false);
@@ -38,10 +38,10 @@ export const Login = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Codelabs</h1>
-              <p className="text-xs text-gray-600">CRM Dashboard</p>
+              <p className="text-xs text-gray-600">Admin Panel</p>
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">Sign In</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-900">Admin Sign In</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
