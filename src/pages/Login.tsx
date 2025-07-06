@@ -13,19 +13,31 @@ export const Login = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'admin' | 'sales_person'>('admin');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
+    
+    console.log('Attempting login with:', { email, role });
 
-    const success = await login(email, password, role);
-    if (success) {
-      navigate('/admin');
+    try {
+      const success = await login(email, password, role);
+      if (success) {
+        console.log('Login successful, redirecting to admin panel');
+        navigate('/admin');
+      } else {
+        setError('Login failed. Please check your credentials.');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -45,6 +57,12 @@ export const Login = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded">
+                {error}
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input

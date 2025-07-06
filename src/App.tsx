@@ -17,6 +17,8 @@ import { useAuth } from '@/hooks/useAuth';
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
   const { user, loading } = useAuth();
 
+  console.log('ProtectedRoute - User:', user, 'Loading:', loading, 'Allowed roles:', allowedRoles);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -26,13 +28,19 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
   }
 
   if (!user) {
+    console.log('No user found, redirecting to login');
     return <Navigate to="/login" replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
+    console.log('User role not allowed:', user.role, 'Allowed:', allowedRoles);
+    if (user.role === 'student') {
+      return <Navigate to="/student-dashboard" replace />;
+    }
     return <Navigate to="/" replace />;
   }
 
+  console.log('Access granted for user:', user.role);
   return <>{children}</>;
 };
 

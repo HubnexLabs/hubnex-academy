@@ -44,6 +44,7 @@ export const StudentDashboard = () => {
   const navigate = useNavigate();
   const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -53,48 +54,73 @@ export const StudentDashboard = () => {
 
   const fetchStudentProfile = async (userId: string) => {
     try {
-      // Get student data with user details
-      const { data, error } = await supabase
+      console.log('Fetching student profile for user ID:', userId);
+      
+      // First, get the user details
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id, full_name, email')
+        .eq('id', userId)
+        .eq('role', 'student')
+        .single();
+
+      if (userError) {
+        console.error('Error fetching user data:', userError);
+        setError('Failed to fetch user information. Please contact your administrator.');
+        setLoading(false);
+        return;
+      }
+
+      if (!userData) {
+        console.error('No user found with ID:', userId);
+        setError('User not found. Please contact your administrator.');
+        setLoading(false);
+        return;
+      }
+
+      // Then get the student profile
+      const { data: studentData, error: studentError } = await supabase
         .from('students')
-        .select(`
-          id,
-          user_id,
-          phone_number,
-          enrollment_date,
-          package_plan_name,
-          plan_details,
-          counsellor_name,
-          users!inner(
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .eq('user_id', userId)
         .single();
 
-      if (error) throw error;
-
-      if (data) {
-        // Map the data to match our interface
-        const mappedProfile: StudentProfile = {
-          id: data.id,
-          user_id: data.user_id,
-          full_name: data.users.full_name,
-          email: data.users.email,
-          phone_number: data.phone_number || '',
-          enrollment_date: data.enrollment_date,
-          package_plan_name: data.package_plan_name || 'Standard Plan',
-          plan_details: data.plan_details || '',
-          counsellor_name: data.counsellor_name || '',
-          progress: 45, // This should come from a calculation based on enrollment date
-          time_spent: 120, // This should come from time tracking data
-          last_active: new Date().toISOString()
-        };
-        
-        setStudentProfile(mappedProfile);
+      if (studentError) {
+        console.error('Error fetching student data:', studentError);
+        setError('Student profile not found. Please contact your administrator to set up your profile.');
+        setLoading(false);
+        return;
       }
+
+      if (!studentData) {
+        console.error('No student profile found for user:', userId);
+        setError('Student profile not found. Please contact your administrator to set up your profile.');
+        setLoading(false);
+        return;
+      }
+
+      // Map the data to match our interface
+      const mappedProfile: StudentProfile = {
+        id: studentData.id,
+        user_id: studentData.user_id,
+        full_name: userData.full_name,
+        email: userData.email,
+        phone_number: studentData.phone_number || '',
+        enrollment_date: studentData.enrollment_date,
+        package_plan_name: studentData.package_plan_name || 'Standard Plan',
+        plan_details: studentData.plan_details || '',
+        counsellor_name: studentData.counsellor_name || '',
+        progress: 45, // This should come from a calculation based on enrollment date
+        time_spent: 120, // This should come from time tracking data
+        last_active: new Date().toISOString()
+      };
+      
+      console.log('Successfully mapped student profile:', mappedProfile);
+      setStudentProfile(mappedProfile);
+      setError(null);
     } catch (error) {
       console.error("Error fetching student profile:", error);
+      setError('An unexpected error occurred. Please try again or contact your administrator.');
     } finally {
       setLoading(false);
     }
@@ -113,17 +139,31 @@ export const StudentDashboard = () => {
     );
   }
 
-  if (!studentProfile) {
+  if (error || !studentProfile) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <Card className="max-w-md w-full p-6">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Profile Not Found</CardTitle>
+            <CardTitle className="text-lg font-semibold text-red-600">Profile Issue</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-500">
-              It seems your profile is not set up yet. Please contact your administrator.
+          <CardContent className="space-y-4">
+            <p className="text-sm text-gray-700">
+              {error || 'Your student profile could not be loaded.'}
             </p>
+            <div className="space-y-2">
+              <Button onClick={() => fetchStudentProfile(user?.id || '')} className="w-full">
+                Retry Loading Profile
+              </Button>
+              <Button variant="outline" onClick={handleLogout} className="w-full">
+                Logout
+              </Button>
+            </div>
+            <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded">
+              <p><strong>Debug Info:</strong></p>
+              <p>User ID: {user?.id}</p>
+              <p>User Email: {user?.email}</p>
+              <p>User Role: {user?.role}</p>
+            </div>
           </CardContent>
         </Card>
       </div>
