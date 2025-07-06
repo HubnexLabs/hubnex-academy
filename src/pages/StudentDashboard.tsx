@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -25,12 +26,14 @@ import {
 
 interface StudentProfile {
   id: string;
+  user_id: string;
   full_name: string;
   email: string;
-  phone: string;
-  course: string;
-  start_date: string;
-  end_date: string;
+  phone_number: string;
+  enrollment_date: string;
+  package_plan_name: string;
+  plan_details: string;
+  counsellor_name: string;
   progress: number;
   time_spent: number;
   last_active: string;
@@ -50,15 +53,46 @@ export const StudentDashboard = () => {
 
   const fetchStudentProfile = async (userId: string) => {
     try {
+      // Get student data with user details
       const { data, error } = await supabase
-        .from('student_profiles')
-        .select('*')
+        .from('students')
+        .select(`
+          id,
+          user_id,
+          phone_number,
+          enrollment_date,
+          package_plan_name,
+          plan_details,
+          counsellor_name,
+          users!inner(
+            full_name,
+            email
+          )
+        `)
         .eq('user_id', userId)
         .single();
 
       if (error) throw error;
 
-      setStudentProfile(data);
+      if (data) {
+        // Map the data to match our interface
+        const mappedProfile: StudentProfile = {
+          id: data.id,
+          user_id: data.user_id,
+          full_name: data.users.full_name,
+          email: data.users.email,
+          phone_number: data.phone_number || '',
+          enrollment_date: data.enrollment_date,
+          package_plan_name: data.package_plan_name || 'Standard Plan',
+          plan_details: data.plan_details || '',
+          counsellor_name: data.counsellor_name || '',
+          progress: 45, // This should come from a calculation based on enrollment date
+          time_spent: 120, // This should come from time tracking data
+          last_active: new Date().toISOString()
+        };
+        
+        setStudentProfile(mappedProfile);
+      }
     } catch (error) {
       console.error("Error fetching student profile:", error);
     } finally {
@@ -145,20 +179,20 @@ export const StudentDashboard = () => {
                 </p>
               </div>
               <Badge className="bg-blue-500 text-white rounded-full px-3 py-1.5 text-sm font-medium">
-                {studentProfile.course}
+                {studentProfile.package_plan_name}
               </Badge>
             </div>
 
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <MetricCard 
                 title="Start Date" 
-                value={new Date(studentProfile.start_date).toLocaleDateString()} 
+                value={new Date(studentProfile.enrollment_date).toLocaleDateString()} 
                 icon={Calendar} 
               />
               <MetricCard 
-                title="End Date" 
-                value={new Date(studentProfile.end_date).toLocaleDateString()} 
-                icon={Calendar} 
+                title="Program" 
+                value={studentProfile.package_plan_name} 
+                icon={BookOpen} 
               />
               <MetricCard 
                 title="Time Spent" 
@@ -174,9 +208,7 @@ export const StudentDashboard = () => {
             percentage={studentProfile.progress}
             description="Keep pushing forward!"
             icon={TrendingUp}
-          >
-            <Progress value={studentProfile.progress} className="h-2 rounded-full mt-2" />
-          </EnhancedProgressCard>
+          />
 
           {/* Quick Access & Resources */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -201,7 +233,7 @@ export const StudentDashboard = () => {
             </Card>
 
             {/* Time Tracking Widget */}
-            <TimeTrackingWidget />
+            <TimeTrackingWidget studentId={studentProfile.id} />
           </div>
 
           {/* Goals & Targets */}
@@ -232,8 +264,8 @@ export const StudentDashboard = () => {
             <CardContent className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                <a href={`tel:${studentProfile.phone}`} className="text-sm text-slate-700 dark:text-slate-300 hover:underline">
-                  {studentProfile.phone}
+                <a href={`tel:${studentProfile.phone_number}`} className="text-sm text-slate-700 dark:text-slate-300 hover:underline">
+                  {studentProfile.phone_number || 'Not provided'}
                 </a>
               </div>
               <div className="flex items-center space-x-2">
