@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Search, Trash2, GraduationCap } from 'lucide-react';
+import { Plus, Search, Trash2, GraduationCap, Edit, Building2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -38,6 +38,7 @@ interface Student {
   notes: string;
   is_active: boolean;
   created_at: string;
+  assigned_client: string;
 }
 
 export const StudentManagement = () => {
@@ -47,7 +48,9 @@ export const StudentManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -58,6 +61,7 @@ export const StudentManagement = () => {
     plan_details: '',
     counsellor_name: '',
     notes: '',
+    assigned_client: '',
   });
   const [newStudentCredentials, setNewStudentCredentials] = useState<{email: string, password: string} | null>(null);
 
@@ -93,7 +97,6 @@ export const StudentManagement = () => {
     try {
       console.log('Creating student with data:', formData);
       
-      // Generate a simple password hash (in production, use proper hashing)
       const hashedPassword = `hashed_${formData.password}`;
 
       const { data, error } = await supabase.rpc('create_student', {
@@ -113,7 +116,6 @@ export const StudentManagement = () => {
       if (error) {
         console.error('Supabase error:', error);
         
-        // Handle specific error cases
         if (error.code === '23505') {
           throw new Error('A user with this email already exists.');
         }
@@ -121,7 +123,27 @@ export const StudentManagement = () => {
         throw error;
       }
 
-      // Store credentials to show to admin
+      // Update client assignment if provided
+      if (formData.assigned_client.trim()) {
+        const { error: updateError } = await supabase
+          .from('students')
+          .update({ 
+            assigned_client: formData.assigned_client.trim(),
+            client_assignment_history: [
+              {
+                client: formData.assigned_client.trim(),
+                assigned_at: new Date().toISOString(),
+                assigned_by: currentUser?.id
+              }
+            ]
+          })
+          .eq('user_id', data);
+
+        if (updateError) {
+          console.error('Error updating client assignment:', updateError);
+        }
+      }
+
       setNewStudentCredentials({
         email: formData.email,
         password: formData.password
@@ -143,11 +165,10 @@ export const StudentManagement = () => {
         plan_details: '',
         counsellor_name: '',
         notes: '',
+        assigned_client: '',
       });
       
       setDialogOpen(false);
-      
-      // Refresh the students list
       await fetchStudents();
       
     } catch (error: any) {
@@ -155,6 +176,78 @@ export const StudentManagement = () => {
       toast({
         title: "Error",
         description: error.message || "Failed to create student. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleEdit = (student: Student) => {
+    setEditingStudent(student);
+    setFormData({
+      email: student.email,
+      password: '',
+      full_name: student.full_name,
+      phone_number: student.phone_number || '',
+      enrollment_date: student.enrollment_date,
+      package_plan_name: student.package_plan_name || '',
+      plan_details: student.plan_details || '',
+      counsellor_name: student.counsellor_name || '',
+      notes: student.notes || '',
+      assigned_client: student.assigned_client || '',
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingStudent) return;
+    
+    setSubmitting(true);
+    
+    try {
+      // Update student record
+      const { error: studentError } = await supabase
+        .from('students')
+        .update({
+          phone_number: formData.phone_number || null,
+          enrollment_date: formData.enrollment_date,
+          package_plan_name: formData.package_plan_name || null,
+          plan_details: formData.plan_details || null,
+          counsellor_name: formData.counsellor_name || null,
+          notes: formData.notes || null,
+          assigned_client: formData.assigned_client || null,
+        })
+        .eq('id', editingStudent.id);
+
+      if (studentError) throw studentError;
+
+      // Update user record
+      const { error: userError } = await supabase
+        .from('users')
+        .update({
+          full_name: formData.full_name,
+          email: formData.email,
+        })
+        .eq('id', editingStudent.user_id);
+
+      if (userError) throw userError;
+
+      toast({
+        title: "Success",
+        description: `Student ${formData.full_name} updated successfully`,
+      });
+
+      setEditDialogOpen(false);
+      setEditingStudent(null);
+      await fetchStudents();
+      
+    } catch (error: any) {
+      console.error('Error updating student:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update student. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -191,7 +284,8 @@ export const StudentManagement = () => {
 
   const filteredStudents = students.filter(student =>
     student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.email.toLowerCase().includes(searchTerm.toLowerCase())
+    student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (student.assigned_client && student.assigned_client.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   if (!isAdmin) {
@@ -288,6 +382,16 @@ export const StudentManagement = () => {
                 </div>
               </div>
 
+              <div>
+                <Label htmlFor="assigned_client">Assigned Client/Company</Label>
+                <Input
+                  id="assigned_client"
+                  value={formData.assigned_client}
+                  onChange={(e) => setFormData({ ...formData, assigned_client: e.target.value })}
+                  placeholder="e.g., ABC Corporation"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="package_plan_name">Package/Plan Name</Label>
@@ -344,6 +448,116 @@ export const StudentManagement = () => {
         </Dialog>
       </div>
 
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Student</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit_email">Email *</Label>
+                <Input
+                  id="edit_email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit_full_name">Full Name *</Label>
+                <Input
+                  id="edit_full_name"
+                  value={formData.full_name}
+                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit_phone_number">Phone Number</Label>
+                <Input
+                  id="edit_phone_number"
+                  value={formData.phone_number}
+                  onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit_enrollment_date">Enrollment Date</Label>
+                <Input
+                  id="edit_enrollment_date"
+                  type="date"
+                  value={formData.enrollment_date}
+                  onChange={(e) => setFormData({ ...formData, enrollment_date: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="edit_assigned_client">Assigned Client/Company</Label>
+              <Input
+                id="edit_assigned_client"
+                value={formData.assigned_client}
+                onChange={(e) => setFormData({ ...formData, assigned_client: e.target.value })}
+                placeholder="e.g., ABC Corporation"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit_package_plan_name">Package/Plan Name</Label>
+                <Input
+                  id="edit_package_plan_name"
+                  value={formData.package_plan_name}
+                  onChange={(e) => setFormData({ ...formData, package_plan_name: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit_counsellor_name">Counsellor Name</Label>
+                <Input
+                  id="edit_counsellor_name"
+                  value={formData.counsellor_name}
+                  onChange={(e) => setFormData({ ...formData, counsellor_name: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="edit_plan_details">Plan Details</Label>
+              <Textarea
+                id="edit_plan_details"
+                value={formData.plan_details}
+                onChange={(e) => setFormData({ ...formData, plan_details: e.target.value })}
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit_notes">Notes/Remarks</Label>
+              <Textarea
+                id="edit_notes"
+                value={formData.notes}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                rows={3}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? 'Updating...' : 'Update Student'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       {/* Show new student credentials */}
       {newStudentCredentials && (
         <Card className="border-green-200 bg-green-50">
@@ -372,7 +586,7 @@ export const StudentManagement = () => {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
-            placeholder="Search by name or email..."
+            placeholder="Search by name, email, or client..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -396,9 +610,9 @@ export const StudentManagement = () => {
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Phone</TableHead>
+                  <TableHead>Client</TableHead>
                   <TableHead>Enrollment Date</TableHead>
                   <TableHead>Package</TableHead>
-                  <TableHead>Counsellor</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -409,9 +623,18 @@ export const StudentManagement = () => {
                     <TableCell className="font-medium">{student.full_name}</TableCell>
                     <TableCell>{student.email}</TableCell>
                     <TableCell>{student.phone_number || 'N/A'}</TableCell>
+                    <TableCell>
+                      {student.assigned_client ? (
+                        <div className="flex items-center">
+                          <Building2 className="w-4 h-4 mr-1 text-blue-500" />
+                          {student.assigned_client}
+                        </div>
+                      ) : (
+                        'Not assigned'
+                      )}
+                    </TableCell>
                     <TableCell>{new Date(student.enrollment_date).toLocaleDateString()}</TableCell>
                     <TableCell>{student.package_plan_name || 'N/A'}</TableCell>
-                    <TableCell>{student.counsellor_name || 'N/A'}</TableCell>
                     <TableCell>
                       <Badge variant={student.is_active ? "default" : "secondary"}>
                         {student.is_active ? 'Active' : 'Inactive'}
@@ -419,6 +642,13 @@ export const StudentManagement = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleEdit(student)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
                         <Button 
                           variant="ghost" 
                           size="sm"

@@ -9,6 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activity_categories: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_categories_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       custom_fields: {
         Row: {
           created_at: string
@@ -358,6 +396,8 @@ export type Database = {
       }
       students: {
         Row: {
+          assigned_client: string | null
+          client_assignment_history: Json | null
           counsellor_name: string | null
           created_at: string
           enrollment_date: string
@@ -370,6 +410,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          assigned_client?: string | null
+          client_assignment_history?: Json | null
           counsellor_name?: string | null
           created_at?: string
           enrollment_date?: string
@@ -382,6 +424,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          assigned_client?: string | null
+          client_assignment_history?: Json | null
           counsellor_name?: string | null
           created_at?: string
           enrollment_date?: string
@@ -399,6 +443,63 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_tracking: {
+        Row: {
+          activity_name: string
+          category_id: string
+          created_at: string
+          duration_minutes: number | null
+          end_time: string | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          start_time: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          activity_name: string
+          category_id: string
+          created_at?: string
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          start_time: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          activity_name?: string
+          category_id?: string
+          created_at?: string
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          start_time?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_tracking_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "activity_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_tracking_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
             referencedColumns: ["id"]
           },
         ]
@@ -477,6 +578,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_student_progress: {
+        Args: { p_student_id: string }
+        Returns: {
+          months_completed: number
+          progress_percentage: number
+          days_remaining: number
+        }[]
+      }
       get_students_with_details: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -493,6 +602,27 @@ export type Database = {
           is_active: boolean
           created_at: string
         }[]
+      }
+      get_time_tracking_summary: {
+        Args: { p_student_id: string }
+        Returns: {
+          category_name: string
+          total_hours: number
+          total_sessions: number
+        }[]
+      }
+      start_time_tracking: {
+        Args: {
+          p_student_id: string
+          p_category_id: string
+          p_activity_name: string
+          p_notes?: string
+        }
+        Returns: string
+      }
+      stop_time_tracking: {
+        Args: { p_student_id: string }
+        Returns: boolean
       }
     }
     Enums: {
