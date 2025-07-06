@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Plus, Search, Trash2, GraduationCap, Edit, Building2 } from 'lucide-react';
+import { Plus, Search, Trash2, GraduationCap, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -38,7 +39,6 @@ interface Student {
   notes: string | null;
   is_active: boolean;
   created_at: string;
-  assigned_client: string | null;
 }
 
 export const StudentManagement = () => {
@@ -61,7 +61,6 @@ export const StudentManagement = () => {
     plan_details: '',
     counsellor_name: '',
     notes: '',
-    assigned_client: '',
   });
   const [newStudentCredentials, setNewStudentCredentials] = useState<{email: string, password: string} | null>(null);
 
@@ -77,13 +76,7 @@ export const StudentManagement = () => {
 
       if (error) throw error;
 
-      // Ensure all students have assigned_client field, even if null
-      const studentsWithClient = (data || []).map((student: any) => ({
-        ...student,
-        assigned_client: student.assigned_client || null
-      }));
-
-      setStudents(studentsWithClient);
+      setStudents(data || []);
     } catch (error) {
       console.error('Error fetching students:', error);
       toast({
@@ -129,27 +122,6 @@ export const StudentManagement = () => {
         throw error;
       }
 
-      // Update client assignment if provided
-      if (formData.assigned_client.trim()) {
-        const { error: updateError } = await supabase
-          .from('students')
-          .update({ 
-            assigned_client: formData.assigned_client.trim(),
-            client_assignment_history: [
-              {
-                client: formData.assigned_client.trim(),
-                assigned_at: new Date().toISOString(),
-                assigned_by: currentUser?.id
-              }
-            ]
-          })
-          .eq('user_id', data);
-
-        if (updateError) {
-          console.error('Error updating client assignment:', updateError);
-        }
-      }
-
       setNewStudentCredentials({
         email: formData.email,
         password: formData.password
@@ -171,7 +143,6 @@ export const StudentManagement = () => {
         plan_details: '',
         counsellor_name: '',
         notes: '',
-        assigned_client: '',
       });
       
       setDialogOpen(false);
@@ -201,7 +172,6 @@ export const StudentManagement = () => {
       plan_details: student.plan_details || '',
       counsellor_name: student.counsellor_name || '',
       notes: student.notes || '',
-      assigned_client: student.assigned_client || '',
     });
     setEditDialogOpen(true);
   };
@@ -223,7 +193,6 @@ export const StudentManagement = () => {
           plan_details: formData.plan_details || null,
           counsellor_name: formData.counsellor_name || null,
           notes: formData.notes || null,
-          assigned_client: formData.assigned_client || null,
         })
         .eq('id', editingStudent.id);
 
@@ -290,8 +259,7 @@ export const StudentManagement = () => {
 
   const filteredStudents = students.filter(student =>
     student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (student.assigned_client && student.assigned_client.toLowerCase().includes(searchTerm.toLowerCase()))
+    student.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (!isAdmin) {
@@ -386,16 +354,6 @@ export const StudentManagement = () => {
                     onChange={(e) => setFormData({ ...formData, enrollment_date: e.target.value })}
                   />
                 </div>
-              </div>
-
-              <div>
-                <Label htmlFor="assigned_client">Assigned Client/Company</Label>
-                <Input
-                  id="assigned_client"
-                  value={formData.assigned_client}
-                  onChange={(e) => setFormData({ ...formData, assigned_client: e.target.value })}
-                  placeholder="e.g., ABC Corporation"
-                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -503,16 +461,6 @@ export const StudentManagement = () => {
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="edit_assigned_client">Assigned Client/Company</Label>
-              <Input
-                id="edit_assigned_client"
-                value={formData.assigned_client}
-                onChange={(e) => setFormData({ ...formData, assigned_client: e.target.value })}
-                placeholder="e.g., ABC Corporation"
-              />
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="edit_package_plan_name">Package/Plan Name</Label>
@@ -592,7 +540,7 @@ export const StudentManagement = () => {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
-            placeholder="Search by name, email, or client..."
+            placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -616,7 +564,6 @@ export const StudentManagement = () => {
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Phone</TableHead>
-                  <TableHead>Client</TableHead>
                   <TableHead>Enrollment Date</TableHead>
                   <TableHead>Package</TableHead>
                   <TableHead>Status</TableHead>
@@ -629,16 +576,6 @@ export const StudentManagement = () => {
                     <TableCell className="font-medium">{student.full_name}</TableCell>
                     <TableCell>{student.email}</TableCell>
                     <TableCell>{student.phone_number || 'N/A'}</TableCell>
-                    <TableCell>
-                      {student.assigned_client ? (
-                        <div className="flex items-center">
-                          <Building2 className="w-4 h-4 mr-1 text-blue-500" />
-                          {student.assigned_client}
-                        </div>
-                      ) : (
-                        'Not assigned'
-                      )}
-                    </TableCell>
                     <TableCell>{new Date(student.enrollment_date).toLocaleDateString()}</TableCell>
                     <TableCell>{student.package_plan_name || 'N/A'}</TableCell>
                     <TableCell>

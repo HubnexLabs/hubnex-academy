@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, BookOpen, Calendar, Phone, Mail, Building2 } from 'lucide-react';
+import { LogOut, User, BookOpen, Calendar, Phone, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { TimeTracker } from '@/components/TimeTracker';
@@ -25,7 +25,6 @@ interface StudentProfile {
   notes: string | null;
   is_active: boolean;
   created_at: string;
-  assigned_client: string | null;
 }
 
 export const StudentDashboard = () => {
@@ -81,7 +80,6 @@ export const StudentDashboard = () => {
             email: directData.users.email,
             full_name: directData.users.full_name,
             is_active: directData.users.is_active,
-            assigned_client: directData.assigned_client || null,
           };
           setProfile(formattedProfile);
         } else {
@@ -167,21 +165,6 @@ export const StudentDashboard = () => {
           </h1>
           <p className="text-gray-600">Here's your learning dashboard and progress overview.</p>
         </div>
-
-        {/* Client Assignment Display */}
-        {profile.assigned_client && (
-          <Card className="mb-6 border-blue-200 bg-blue-50">
-            <CardContent className="p-4">
-              <div className="flex items-center">
-                <Building2 className="w-5 h-5 text-blue-600 mr-3" />
-                <div>
-                  <p className="text-sm text-blue-600 font-medium">Currently working with:</p>
-                  <p className="text-lg font-semibold text-blue-800">{profile.assigned_client}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Profile & Progress */}
