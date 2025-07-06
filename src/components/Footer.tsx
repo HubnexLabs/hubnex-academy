@@ -1,5 +1,6 @@
 
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -99,9 +100,9 @@ export const Footer = () => {
             <p>&copy; {currentYear} Hubnex Labs. All rights reserved.</p>
           </div>
           <div className="flex space-x-6">
-            <a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-blue-400 transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-blue-400 transition-colors">Refund Policy</a>
+            <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:text-blue-400 transition-colors">Terms of Service</Link>
+            <Link to="/refund-policy" className="hover:text-blue-400 transition-colors">Refund Policy</Link>
           </div>
         </div>
 

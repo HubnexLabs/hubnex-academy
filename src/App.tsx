@@ -12,6 +12,9 @@ import { Dashboard } from '@/pages/Dashboard';
 import { LeadsManagement } from '@/pages/LeadsManagement';
 import { UserManagement } from '@/pages/UserManagement';
 import NotFound from '@/pages/NotFound';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
+import RefundPolicy from '@/pages/RefundPolicy';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
           
           {/* Protected dashboard routes */}
           <Route path="/dashboard" element={
