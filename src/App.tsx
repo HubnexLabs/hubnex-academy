@@ -1,9 +1,9 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
-import { Home } from '@/pages/Home';
+import Index from '@/pages/Index';
 import { StudentLogin } from '@/pages/StudentLogin';
 import { StudentDashboard } from '@/pages/StudentDashboard';
 import { Dashboard } from '@/pages/Dashboard';
@@ -51,7 +51,7 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Index />} />
       <Route path="/student-login" element={<StudentLogin />} />
       
       <Route path="/student-dashboard" element={
