@@ -1,15 +1,16 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, BookOpen, Calendar, Phone, Mail } from 'lucide-react';
+import { LogOut, User, BookOpen, Calendar, Phone, Mail, Clock, TrendingUp, Target, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { TimeTracker } from '@/components/TimeTracker';
-import { ProgressCard } from '@/components/ProgressCard';
+import { TimeTrackingWidget } from '@/components/dashboard/TimeTrackingWidget';
+import { EnhancedProgressCard } from '@/components/dashboard/EnhancedProgressCard';
+import { MetricCard } from '@/components/dashboard/MetricCard';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { TimeSummary } from '@/components/TimeSummary';
 
 interface StudentProfile {
@@ -34,10 +35,17 @@ export const StudentDashboard = () => {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [timeStats, setTimeStats] = useState({
+    todayHours: 0,
+    weekHours: 0,
+    monthHours: 0,
+    totalSessions: 0
+  });
 
   useEffect(() => {
     if (user && user.role === 'student') {
       fetchProfile();
+      fetchTimeStats();
     }
   }, [user]);
 
@@ -100,6 +108,56 @@ export const StudentDashboard = () => {
     }
   };
 
+  const fetchTimeStats = async () => {
+    if (!user) return;
+    
+    try {
+      const today = new Date();
+      const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const startOfWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+      // Get student ID first
+      const { data: studentData } = await supabase
+        .from('students')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!studentData) return;
+
+      // Fetch time tracking data
+      const { data: timeData, error } = await supabase
+        .from('time_tracking')
+        .select('duration_minutes, created_at')
+        .eq('student_id', studentData.id)
+        .not('duration_minutes', 'is', null);
+
+      if (error) throw error;
+
+      const todayHours = timeData
+        ?.filter(t => new Date(t.created_at) >= startOfDay)
+        .reduce((sum, t) => sum + (t.duration_minutes || 0), 0) / 60 || 0;
+
+      const weekHours = timeData
+        ?.filter(t => new Date(t.created_at) >= startOfWeek)
+        .reduce((sum, t) => sum + (t.duration_minutes || 0), 0) / 60 || 0;
+
+      const monthHours = timeData
+        ?.filter(t => new Date(t.created_at) >= startOfMonth)
+        .reduce((sum, t) => sum + (t.duration_minutes || 0), 0) / 60 || 0;
+
+      setTimeStats({
+        todayHours: Math.round(todayHours * 10) / 10,
+        weekHours: Math.round(weekHours * 10) / 10,
+        monthHours: Math.round(monthHours * 10) / 10,
+        totalSessions: timeData?.length || 0
+      });
+    } catch (error) {
+      console.error('Error fetching time stats:', error);
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
     navigate('/');
@@ -107,29 +165,39 @@ export const StudentDashboard = () => {
 
   const handleTrackingChange = () => {
     setRefreshTrigger(prev => prev + 1);
+    fetchTimeStats();
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent"></div>
+          <p className="text-muted-foreground animate-pulse">Loading your dashboard...</p>
+        </div>
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-6 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
+        <Card className="w-full max-w-md animate-scale-in">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <User className="w-8 h-8 text-destructive" />
+            </div>
             <h2 className="text-xl font-semibold mb-2">Profile Not Found</h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               Your student profile could not be loaded. This might be because your account is still being set up or there was an issue with your registration.
             </p>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-6">
               Please contact your counsellor or administrator for assistance.
             </p>
-            <Button onClick={handleLogout}>Back to Home</Button>
+            <Button onClick={handleLogout} className="w-full">
+              <LogOut className="w-4 h-4 mr-2" />
+              Back to Home
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -137,21 +205,41 @@ export const StudentDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
+      {/* Enhanced Header */}
+      <header className="glass border-b backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">C</span>
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-lg">C</span>
               </div>
-              <h1 className="text-xl font-bold text-gray-900">Codelabs</h1>
+              <div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  Codelabs
+                </h1>
+                <p className="text-xs text-muted-foreground">Student Dashboard</p>
+              </div>
             </div>
-            <Button variant="ghost" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
+            
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    {profile.full_name.charAt(0)}
+                  </span>
+                </div>
+                <div className="hidden sm:block text-right">
+                  <p className="text-sm font-medium">{profile.full_name}</p>
+                  <p className="text-xs text-muted-foreground">Student</p>
+                </div>
+              </div>
+              <Button variant="ghost" onClick={handleLogout} size="sm">
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -159,126 +247,175 @@ export const StudentDashboard = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {profile.full_name}!
-          </h1>
-          <p className="text-gray-600">Here's your learning dashboard and progress overview.</p>
+        <div className="mb-8 animate-slide-up">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Welcome back, {profile.full_name.split(' ')[0]}! 👋
+              </h1>
+              <p className="text-muted-foreground text-lg">Here's your learning dashboard and progress overview.</p>
+            </div>
+            <Badge variant={profile.is_active ? "default" : "secondary"} className="px-4 py-2">
+              <div className={`w-2 h-2 rounded-full mr-2 ${profile.is_active ? 'bg-green-400' : 'bg-gray-400'}`} />
+              {profile.is_active ? 'Active' : 'Inactive'}
+            </Badge>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Profile & Progress */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Profile Overview */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <User className="w-5 h-5 mr-2" />
-                  Profile Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Full Name</label>
-                  <p className="text-gray-900">{profile.full_name}</p>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Email</label>
-                  <div className="flex items-center">
-                    <Mail className="w-4 h-4 mr-2 text-gray-400" />
-                    <p className="text-gray-900">{profile.email}</p>
-                  </div>
-                </div>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <MetricCard
+            title="Today's Hours"
+            value={timeStats.todayHours}
+            description="Hours logged today"
+            icon={Clock}
+            trend={timeStats.todayHours > 0 ? { value: 12, isPositive: true } : undefined}
+            gradient={true}
+          />
+          <MetricCard
+            title="This Week"
+            value={`${timeStats.weekHours}h`}
+            description="Weekly progress"
+            icon={TrendingUp}
+          />
+          <MetricCard
+            title="This Month"
+            value={`${timeStats.monthHours}h`}
+            description="Monthly total"
+            icon={Target}
+          />
+          <MetricCard
+            title="Total Sessions"
+            value={timeStats.totalSessions}
+            description="All time sessions"
+            icon={Activity}
+          />
+        </div>
 
-                {profile.phone_number && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Phone</label>
-                    <div className="flex items-center">
-                      <Phone className="w-4 h-4 mr-2 text-gray-400" />
-                      <p className="text-gray-900">{profile.phone_number}</p>
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Enrollment Date</label>
-                  <div className="flex items-center">
-                    <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-                    <p className="text-gray-900">{new Date(profile.enrollment_date).toLocaleDateString()}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Status</label>
-                  <div className="mt-1">
-                    <Badge variant={profile.is_active ? "default" : "secondary"}>
-                      {profile.is_active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </div>
-                </div>
-
-                {profile.counsellor_name && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Counsellor</label>
-                    <p className="text-gray-900">{profile.counsellor_name}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Progress Card */}
-            <ProgressCard studentId={profile.id} />
-          </div>
-
-          {/* Right Column - Time Tracking & Course Info */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Time Tracker */}
-            <TimeTracker studentId={profile.id} onTrackingChange={handleTrackingChange} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Time Tracking & Progress */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Time Tracking Widget */}
+            <div className="animate-slide-up">
+              <TimeTrackingWidget 
+                studentId={profile.id} 
+                onTrackingChange={handleTrackingChange} 
+              />
+            </div>
 
             {/* Course Information */}
-            <Card>
+            <Card className="animate-slide-up hover:shadow-lg transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <BookOpen className="w-5 h-5 mr-2" />
+                  <div className="p-2 rounded-lg bg-blue-500 mr-3">
+                    <BookOpen className="w-5 h-5 text-white" />
+                  </div>
                   Enrolled Courses
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {profile.package_plan_name ? (
                   <div className="space-y-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
                         {profile.package_plan_name}
                       </h3>
                       {profile.plan_details && (
-                        <p className="text-gray-600 mt-2">{profile.plan_details}</p>
+                        <p className="text-blue-600 dark:text-blue-300">{profile.plan_details}</p>
                       )}
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-8">
-                    <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Courses Enrolled</h3>
-                    <p className="text-gray-600">Contact your counsellor to get started with your learning journey.</p>
+                  <div className="text-center py-12 bg-muted/30 rounded-lg border-2 border-dashed border-muted">
+                    <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                    <h3 className="text-lg font-medium text-muted-foreground mb-2">No Courses Enrolled</h3>
+                    <p className="text-muted-foreground mb-4">Contact your counsellor to get started with your learning journey.</p>
+                    <Button variant="outline">
+                      Contact Counsellor
+                    </Button>
                   </div>
                 )}
               </CardContent>
             </Card>
 
             {/* Time Summary */}
-            <TimeSummary studentId={profile.id} refreshTrigger={refreshTrigger} />
+            <div className="animate-slide-up">
+              <TimeSummary studentId={profile.id} refreshTrigger={refreshTrigger} />
+            </div>
+          </div>
+
+          {/* Right Column - Profile & Progress */}
+          <div className="space-y-8">
+            {/* Enhanced Progress Card */}
+            <div className="animate-slide-up">
+              <EnhancedProgressCard studentId={profile.id} />
+            </div>
+
+            {/* Profile Overview */}
+            <Card className="animate-slide-up hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <div className="p-2 rounded-lg bg-purple-500 mr-3">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
+                  Profile Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Full Name</label>
+                    <p className="font-medium mt-1">{profile.full_name}</p>
+                  </div>
+                  
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Email</label>
+                    <div className="flex items-center mt-1">
+                      <Mail className="w-4 h-4 mr-2 text-muted-foreground" />
+                      <p className="font-medium">{profile.email}</p>
+                    </div>
+                  </div>
+
+                  {profile.phone_number && (
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Phone</label>
+                      <div className="flex items-center mt-1">
+                        <Phone className="w-4 h-4 mr-2 text-muted-foreground" />
+                        <p className="font-medium">{profile.phone_number}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Enrollment Date</label>
+                    <div className="flex items-center mt-1">
+                      <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
+                      <p className="font-medium">{new Date(profile.enrollment_date).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+
+                  {profile.counsellor_name && (
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Counsellor</label>
+                      <p className="font-medium mt-1">{profile.counsellor_name}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
         {/* Additional Information */}
         {profile.notes && (
-          <Card className="mt-6">
+          <Card className="mt-8 animate-slide-up">
             <CardHeader>
               <CardTitle>Notes & Remarks</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700">{profile.notes}</p>
+              <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <p className="text-amber-800 dark:text-amber-200">{profile.notes}</p>
+              </div>
             </CardContent>
           </Card>
         )}
