@@ -17,15 +17,15 @@ interface StudentProfile {
   user_id: string;
   email: string;
   full_name: string;
-  phone_number: string;
+  phone_number: string | null;
   enrollment_date: string;
-  package_plan_name: string;
-  plan_details: string;
-  counsellor_name: string;
-  notes: string;
+  package_plan_name: string | null;
+  plan_details: string | null;
+  counsellor_name: string | null;
+  notes: string | null;
   is_active: boolean;
   created_at: string;
-  assigned_client: string;
+  assigned_client: string | null;
 }
 
 export const StudentDashboard = () => {
