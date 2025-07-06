@@ -77,7 +77,13 @@ export const StudentManagement = () => {
 
       if (error) throw error;
 
-      setStudents(data || []);
+      // Ensure all students have assigned_client field, even if null
+      const studentsWithClient = (data || []).map((student: any) => ({
+        ...student,
+        assigned_client: student.assigned_client || null
+      }));
+
+      setStudents(studentsWithClient);
     } catch (error) {
       console.error('Error fetching students:', error);
       toast({
@@ -633,7 +639,7 @@ export const StudentManagement = () => {
                         'Not assigned'
                       )}
                     </TableCell>
-                    <TableCell>{new Date(student.enrollment_date).toLocaleDateString()}</TableCell>
+                    <TableCell>{new Date(student.enrollment_date).toLocalDateString()}</TableCell>
                     <TableCell>{student.package_plan_name || 'N/A'}</TableCell>
                     <TableCell>
                       <Badge variant={student.is_active ? "default" : "secondary"}>

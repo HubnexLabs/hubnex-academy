@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -81,6 +80,7 @@ export const StudentDashboard = () => {
             email: directData.users.email,
             full_name: directData.users.full_name,
             is_active: directData.users.is_active,
+            assigned_client: directData.assigned_client || null,
           };
           setProfile(formattedProfile);
         } else {
