@@ -8,7 +8,7 @@ import {
   LayoutDashboard,
   Users,
   UserCheck,
-  Settings,
+  GraduationCap,
   LogOut,
 } from 'lucide-react';
 
@@ -44,6 +44,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       href: '/users',
       icon: UserCheck,
       current: location.pathname === '/users',
+    }, {
+      name: 'Students',
+      href: '/students',
+      icon: GraduationCap,
+      current: location.pathname === '/students',
     }] : []),
   ];
 

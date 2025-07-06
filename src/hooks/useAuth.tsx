@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -14,7 +13,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string, role: 'admin' | 'sales_person') => Promise<boolean>;
+  login: (email: string, password: string, role?: 'admin' | 'sales_person' | 'student') => Promise<boolean>;
   logout: () => Promise<void>;
   isAdmin: boolean;
   isSalesPerson: boolean;
@@ -42,25 +41,63 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string, role: 'admin' | 'sales_person'): Promise<boolean> => {
+  const login = async (email: string, password: string, role?: 'admin' | 'sales_person' | 'student'): Promise<boolean> => {
     try {
       console.log('Attempting login with:', { email, role });
 
-      // First, check if user exists with the specified role
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', email)
-        .eq('role', role)
-        .eq('is_active', true)
-        .single();
+      // If no role specified, try to find user with any role
+      let userData;
+      let userError;
+
+      if (role) {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', email)
+          .eq('role', role)
+          .eq('is_active', true)
+          .single();
+        
+        userData = data;
+        userError = error;
+      } else {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', email)
+          .eq('is_active', true)
+          .single();
+        
+        userData = data;
+        userError = error;
+      }
 
       console.log('User query result:', { userData, userError });
 
       if (userError || !userData) {
+        // Special message for deleted/inactive students
+        if (!userData) {
+          const { data: deletedUser } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .eq('is_active', false)
+            .single();
+          
+          if (deletedUser && deletedUser.role === 'student') {
+            toast({
+              title: "Account Deleted",
+              description: "Your account has been deleted. Please contact support if you believe this is a mistake.",
+              variant: "destructive",
+            });
+            return false;
+          }
+        }
+
+        const roleText = role ? role.replace('_', ' ') : 'user';
         toast({
           title: "Login Failed",
-          description: `No active ${role.replace('_', ' ')} found with this email.`,
+          description: `No active ${roleText} found with this email.`,
           variant: "destructive",
         });
         return false;

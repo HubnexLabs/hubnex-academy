@@ -8,9 +8,12 @@ import { Toaster } from '@/components/ui/toaster';
 // Pages
 import Index from '@/pages/Index';
 import { Login } from '@/pages/Login';
+import { StudentLogin } from '@/pages/StudentLogin';
 import { Dashboard } from '@/pages/Dashboard';
+import { StudentDashboard } from '@/pages/StudentDashboard';
 import { LeadsManagement } from '@/pages/LeadsManagement';
 import { UserManagement } from '@/pages/UserManagement';
+import { StudentManagement } from '@/pages/StudentManagement';
 import NotFound from '@/pages/NotFound';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
@@ -24,9 +27,17 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/student-login" element={<StudentLogin />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
+          
+          {/* Student Dashboard */}
+          <Route path="/student-dashboard" element={
+            <ProtectedRoute studentOnly>
+              <StudentDashboard />
+            </ProtectedRoute>
+          } />
           
           {/* Protected dashboard routes */}
           <Route path="/dashboard" element={
@@ -49,6 +60,14 @@ function App() {
             <ProtectedRoute adminOnly>
               <DashboardLayout>
                 <UserManagement />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/students" element={
+            <ProtectedRoute adminOnly>
+              <DashboardLayout>
+                <StudentManagement />
               </DashboardLayout>
             </ProtectedRoute>
           } />

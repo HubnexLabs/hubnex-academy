@@ -6,9 +6,10 @@ import { ReactNode } from 'react';
 interface ProtectedRouteProps {
   children: ReactNode;
   adminOnly?: boolean;
+  studentOnly?: boolean;
 }
 
-export const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ children, adminOnly = false, studentOnly = false }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -20,11 +21,23 @@ export const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRoutePr
   }
 
   if (!user) {
+    if (studentOnly) {
+      return <Navigate to="/student-login" replace />;
+    }
     return <Navigate to="/login" replace />;
   }
 
   if (adminOnly && user.role !== 'admin') {
     return <Navigate to="/dashboard" replace />;
+  }
+
+  if (studentOnly && user.role !== 'student') {
+    return <Navigate to="/student-dashboard" replace />;
+  }
+
+  // Redirect students trying to access admin/sales dashboard
+  if (user.role === 'student' && !studentOnly) {
+    return <Navigate to="/student-dashboard" replace />;
   }
 
   return <>{children}</>;

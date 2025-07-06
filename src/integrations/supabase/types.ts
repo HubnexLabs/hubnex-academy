@@ -356,6 +356,53 @@ export type Database = {
           },
         ]
       }
+      students: {
+        Row: {
+          counsellor_name: string | null
+          created_at: string
+          enrollment_date: string
+          id: string
+          notes: string | null
+          package_plan_name: string | null
+          phone_number: string | null
+          plan_details: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          counsellor_name?: string | null
+          created_at?: string
+          enrollment_date?: string
+          id?: string
+          notes?: string | null
+          package_plan_name?: string | null
+          phone_number?: string | null
+          plan_details?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          counsellor_name?: string | null
+          created_at?: string
+          enrollment_date?: string
+          id?: string
+          notes?: string | null
+          package_plan_name?: string | null
+          phone_number?: string | null
+          plan_details?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string
@@ -412,9 +459,40 @@ export type Database = {
         }
         Returns: string
       }
+      create_student: {
+        Args: {
+          p_email: string
+          p_password: string
+          p_full_name: string
+          p_phone_number?: string
+          p_enrollment_date?: string
+          p_package_plan_name?: string
+          p_plan_details?: string
+          p_counsellor_name?: string
+          p_notes?: string
+        }
+        Returns: string
+      }
       generate_lead_id: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_students_with_details: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          user_id: string
+          email: string
+          full_name: string
+          phone_number: string
+          enrollment_date: string
+          package_plan_name: string
+          plan_details: string
+          counsellor_name: string
+          notes: string
+          is_active: boolean
+          created_at: string
+        }[]
       }
     }
     Enums: {
@@ -426,7 +504,7 @@ export type Database = {
         | "cold_call"
         | "email_campaign"
       lead_status: "fresh" | "in_progress" | "closed" | "lost"
-      user_role: "admin" | "sales_person"
+      user_role: "admin" | "sales_person" | "student"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -551,7 +629,7 @@ export const Constants = {
         "email_campaign",
       ],
       lead_status: ["fresh", "in_progress", "closed", "lost"],
-      user_role: ["admin", "sales_person"],
+      user_role: ["admin", "sales_person", "student"],
     },
   },
 } as const
