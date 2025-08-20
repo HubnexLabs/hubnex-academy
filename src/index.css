@@ -18,10 +18,10 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 220 10% 8%;
 
-    --primary: 262 83% 58%;
+    --primary: 214 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 262 83% 68%;
-    --primary-dark: 262 83% 48%;
+    --primary-glow: 214 100% 60%;
+    --primary-dark: 214 100% 40%;
 
     --secondary: 220 14.3% 95.9%;
     --secondary-foreground: 220.9 39.3% 11%;
@@ -29,33 +29,33 @@ All colors MUST be HSL.
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 262 83% 95%;
-    --accent-foreground: 262 83% 18%;
+    --accent: 214 100% 95%;
+    --accent-foreground: 214 100% 18%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 262 83% 58%;
+    --ring: 214 100% 50%;
 
     --radius: 1rem;
 
     /* Luxury brand colors */
-    --brand-gradient: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(283 83% 58%) 50%, hsl(304 83% 58%) 100%);
-    --brand-gradient-soft: linear-gradient(135deg, hsl(262 83% 95%) 0%, hsl(283 83% 95%) 50%, hsl(304 83% 95%) 100%);
-    --brand-gradient-luxury: linear-gradient(135deg, hsl(262 90% 65%) 0%, hsl(283 90% 65%) 50%, hsl(304 90% 65%) 100%);
+    --brand-gradient: linear-gradient(135deg, hsl(214 100% 50%) 0%, hsl(200 100% 50%) 50%, hsl(186 100% 50%) 100%);
+    --brand-gradient-soft: linear-gradient(135deg, hsl(214 100% 95%) 0%, hsl(200 100% 95%) 50%, hsl(186 100% 95%) 100%);
+    --brand-gradient-luxury: linear-gradient(135deg, hsl(214 100% 60%) 0%, hsl(200 100% 60%) 50%, hsl(186 100% 60%) 100%);
     
     /* Sophisticated gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(283 83% 58%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(220 100% 60%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(262 83% 98%) 100%);
-    --gradient-surface: linear-gradient(135deg, hsl(262 20% 98%) 0%, hsl(220 14% 96%) 100%);
-    --gradient-luxury-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(262 20% 99%) 50%, hsl(283 20% 99%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(214 100% 50%) 0%, hsl(200 100% 50%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(214 100% 50%) 0%, hsl(200 100% 60%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(214 100% 98%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(214 20% 98%) 0%, hsl(200 14% 96%) 100%);
+    --gradient-luxury-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(214 20% 99%) 50%, hsl(200 20% 99%) 100%);
     
     /* Bold accent colors */
     --electric-blue: 214 100% 60%;
-    --neon-purple: 283 100% 70%;
+    --neon-blue: 200 100% 70%;
     --cyber-green: 142 76% 36%;
     --warning-orange: 31 100% 60%;
     
@@ -64,8 +64,8 @@ All colors MUST be HSL.
     --shadow-md: 0 4px 8px hsl(220 13% 91% / 0.16);
     --shadow-lg: 0 8px 16px hsl(220 13% 91% / 0.2);
     --shadow-xl: 0 16px 32px hsl(220 13% 91% / 0.24);
-    --shadow-brand: 0 8px 32px hsl(262 83% 58% / 0.3);
-    --shadow-glow: 0 0 40px hsl(262 83% 58% / 0.4);
+    --shadow-brand: 0 8px 32px hsl(214 100% 50% / 0.3);
+    --shadow-glow: 0 0 40px hsl(214 100% 50% / 0.4);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -74,7 +74,7 @@ All colors MUST be HSL.
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 262 83% 58%;
+    --sidebar-ring: 214 100% 50%;
   }
 
   .dark {
@@ -131,11 +131,11 @@ All colors MUST be HSL.
   }
   
   .text-luxury {
-    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary via-neon-blue to-primary-glow bg-clip-text text-transparent;
   }
   
   .btn-luxury {
-    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow hover:opacity-90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0;
+    @apply bg-gradient-to-r from-primary via-neon-blue to-primary-glow hover:opacity-90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0;
   }
   
   .card-luxury {
@@ -145,11 +145,11 @@ All colors MUST be HSL.
 
 @layer components {
   .gradient-text {
-    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary via-neon-blue to-primary-glow bg-clip-text text-transparent;
   }
   
   .text-luxury {
-    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary via-neon-blue to-primary-glow bg-clip-text text-transparent;
   }
   
   .glass-card {
@@ -166,10 +166,10 @@ All colors MUST be HSL.
   }
   
   .hero-glow {
-    @apply relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/20 before:via-neon-purple/20 before:to-primary-glow/20 before:blur-3xl before:-z-10;
+    @apply relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/20 before:via-neon-blue/20 before:to-primary-glow/20 before:blur-3xl before:-z-10;
   }
   
   .luxury-button {
-    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow hover:opacity-90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0 hover:scale-105 transform;
+    @apply bg-gradient-to-r from-primary via-neon-blue to-primary-glow hover:opacity-90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0 hover:scale-105 transform;
   }
 }

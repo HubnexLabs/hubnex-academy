@@ -32,9 +32,9 @@ export const BenefitsSection = () => {
     },
     {
       icon: CreditCard,
-      title: "Flexible Payment",
-      description: "Easy EMI options starting ₹11,667/month. Up to ₹10,000 scholarship available.",
-      badge: "EMI Available"
+      title: "Personalized Learning",
+      description: "Custom roadmap tailored to your skills, goals, and career aspirations for maximum impact.",
+      badge: "Customized"
     },
     {
       icon: Award,

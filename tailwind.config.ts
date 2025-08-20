@@ -61,7 +61,7 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				'electric-blue': 'hsl(var(--electric-blue))',
-				'neon-purple': 'hsl(var(--neon-purple))',
+				'neon-blue': 'hsl(var(--neon-blue))',
 				'cyber-green': 'hsl(var(--cyber-green))',
 				'warning-orange': 'hsl(var(--warning-orange))',
 				sidebar: {
