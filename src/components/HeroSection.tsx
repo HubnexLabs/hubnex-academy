@@ -18,12 +18,12 @@ export const HeroSection = () => {
                 🎯 100% Placement Guarantee
               </Badge>
               
-              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-black leading-tight tracking-tight">
-                Become <span className="gradient-text animate-glow">Industry-Ready.</span><br />
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-black leading-tight tracking-tight font-display">
+                Become <span className="text-luxury animate-glow">Industry-Ready.</span><br />
                 <span className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-muted-foreground">Not Just Certified.</span>
               </h1>
               
-              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed font-medium">
+              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed font-sans">
                 Get a <span className="text-primary font-bold">tailored roadmap</span> aligned with your skills and career goals. 
                 Work on real client projects, receive expert mentorship, and land your dream job with 
                 <span className="text-cyber-green font-bold"> guaranteed placement support.</span>
@@ -33,7 +33,8 @@ export const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-primary via-neon-purple to-primary-glow hover:opacity-90 text-lg md:text-xl px-8 md:px-12 py-4 md:py-6 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 font-bold w-full sm:w-auto border-0 animate-glow"
+                variant="luxury"
+                className="text-lg md:text-xl px-8 md:px-12 py-4 md:py-6 font-bold w-full sm:w-auto"
                 onClick={() => {
                   const form = document.querySelector('#career-counselling-form');
                   if (form) {
@@ -47,7 +48,7 @@ export const HeroSection = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-primary text-primary hover:bg-primary/10 hover:border-primary-glow text-lg md:text-xl px-8 md:px-12 py-4 md:py-6 font-bold w-full sm:w-auto backdrop-blur-sm"
+                className="text-lg md:text-xl px-8 md:px-12 py-4 md:py-6 font-bold w-full sm:w-auto"
                 onClick={() => {
                   const form = document.querySelector('#career-counselling-form');
                   if (form) {

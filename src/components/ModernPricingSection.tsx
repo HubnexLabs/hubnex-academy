@@ -24,18 +24,18 @@ export const ModernPricingSection = () => {
           <Badge className="mb-6 bg-gradient-to-r from-warning-orange/20 to-warning-orange/30 text-warning-orange hover:from-warning-orange/30 hover:to-warning-orange/40 font-bold text-lg border-0 px-6 py-3">
             💰 Limited Time Offer
           </Badge>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6 tracking-tight">
-            Invest in Your <span className="gradient-text">Future</span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6 tracking-tight font-display">
+            Invest in Your <span className="text-luxury">Future</span>
           </h2>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto font-medium">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto font-sans">
             Transform your career with our industry-leading program. One simple price, maximum value.
           </p>
         </div>
 
         <div className="max-w-6xl mx-auto">
-          <Card className="modern-card border-0 shadow-2xl animate-slide-up">
+          <Card className="luxury-card border-0 rounded-3xl animate-slide-up">
             <CardHeader className="text-center pb-8 pt-16">
-              <CardTitle className="text-4xl font-black text-foreground mb-6">
+              <CardTitle className="text-4xl font-black text-foreground mb-6 font-display">
                 Complete Transformation Program
               </CardTitle>
               
@@ -48,7 +48,7 @@ export const ModernPricingSection = () => {
                     <div className="text-sm text-muted-foreground">Old Price</div>
                   </div>
                   
-                  <div className="text-6xl md:text-8xl font-black gradient-text animate-glow">
+                  <div className="text-6xl md:text-8xl font-black text-luxury animate-glow font-display">
                     ₹70,000
                   </div>
                 </div>
@@ -66,7 +66,7 @@ export const ModernPricingSection = () => {
                     <div className="w-8 h-8 bg-gradient-to-r from-cyber-green to-cyber-green/80 rounded-full flex items-center justify-center flex-shrink-0">
                       <Check className="w-5 h-5 text-white font-bold" />
                     </div>
-                    <span className="text-foreground font-medium text-lg">{feature}</span>
+                    <span className="text-foreground font-medium text-lg font-sans">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -74,7 +74,8 @@ export const ModernPricingSection = () => {
               <div className="space-y-6">
                 <Button 
                   size="lg" 
-                  className="w-full bg-gradient-to-r from-primary via-neon-purple to-primary-glow hover:opacity-90 text-xl py-8 font-black border-0 shadow-xl animate-glow"
+                  variant="luxury"
+                  className="w-full text-xl py-8 font-black"
                   onClick={() => {
                     const form = document.querySelector('#career-counselling-form');
                     if (form) {

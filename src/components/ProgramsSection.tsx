@@ -75,54 +75,54 @@ export const ProgramsSection = () => {
         />
       ))}
       
-      <section id="programs" className="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
+      <section id="programs" className="py-20 px-4 bg-gradient-to-br from-background via-primary/3 to-accent/5">
         <div className="container mx-auto">
           <header className="text-center mb-16">
-            <Badge className="mb-4 bg-purple-100 text-purple-800 hover:bg-purple-100">
+            <Badge className="mb-4 bg-gradient-to-r from-primary/20 to-neon-purple/20 text-primary hover:from-primary/30 hover:to-neon-purple/30 border-0 font-semibold">
               Our Programs
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Choose Your Career Path
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-display">
+              Choose Your <span className="text-luxury">Career Path</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-sans">
               Industry-focused programs designed with hiring partners to match exactly what employers need.
             </p>
           </header>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {programs.map((program, index) => (
-              <article key={index} className="relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 group hover:scale-105">
-                <Card className="h-full">
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${program.color} opacity-10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-500`}></div>
+              <article key={index} className="relative overflow-hidden luxury-card rounded-2xl hover:scale-105 transition-all duration-300 group">
+                <Card className="h-full border-0 bg-transparent">
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${program.color} opacity-20 rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-500`}></div>
                   
                   <CardHeader className="relative z-10">
                     <div className="flex items-start justify-between mb-4">
-                      <div className={`w-12 h-12 bg-gradient-to-r ${program.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      <div className={`w-12 h-12 bg-gradient-to-r ${program.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                         <program.icon className="w-6 h-6 text-white" />
                       </div>
-                      <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+                      <Badge className="bg-gradient-to-r from-warning-orange/20 to-warning-orange/30 text-warning-orange hover:from-warning-orange/30 hover:to-warning-orange/40 border-0 font-semibold">
                         {program.badge}
                       </Badge>
                     </div>
-                    <CardTitle className="text-xl font-bold text-gray-900 mb-2">
+                    <CardTitle className="text-xl font-bold text-foreground mb-2 font-display">
                       {program.title}
                     </CardTitle>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground font-sans">
                       <span>⏱️ {program.duration}</span>
-                      <span className="font-semibold text-green-600">{program.avgSalary}</span>
+                      <span className="font-bold text-cyber-green">{program.avgSalary}</span>
                     </div>
                   </CardHeader>
 
                   <CardContent className="relative z-10">
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-muted-foreground mb-6 leading-relaxed font-sans">
                       {program.description}
                     </p>
                     
                     <div className="mb-6">
-                      <h4 className="font-semibold text-gray-900 mb-3">Key Skills You'll Learn:</h4>
+                      <h4 className="font-semibold text-foreground mb-3 font-display">Key Skills You'll Learn:</h4>
                       <div className="flex flex-wrap gap-2">
                         {program.skills.map((skill, skillIndex) => (
-                          <Badge key={skillIndex} variant="secondary" className="text-xs bg-gray-100 text-gray-700">
+                          <Badge key={skillIndex} variant="secondary" className="text-xs bg-primary/10 text-primary border-0 font-medium">
                             {skill}
                           </Badge>
                         ))}
@@ -131,7 +131,8 @@ export const ProgramsSection = () => {
 
                     <div className="space-y-3">
                       <Button 
-                        className={`w-full bg-gradient-to-r ${program.color} hover:opacity-90 transition-opacity`}
+                        variant="luxury"
+                        className="w-full"
                         onClick={() => {
                           const form = document.querySelector('#career-counselling-form');
                           if (form) {
@@ -141,7 +142,7 @@ export const ProgramsSection = () => {
                       >
                         Get Your Roadmap Free
                       </Button>
-                      <Button variant="outline" className="w-full border-border">
+                      <Button variant="outline" className="w-full">
                         Learn More
                       </Button>
                     </div>
@@ -152,15 +153,16 @@ export const ProgramsSection = () => {
           </div>
 
           <div className="mt-16 text-center">
-            <div className="bg-white rounded-2xl p-8 shadow-lg max-w-3xl mx-auto">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Not Sure Which Program Is Right for You?
+            <div className="luxury-card rounded-2xl p-8 max-w-3xl mx-auto">
+              <h3 className="text-2xl font-bold text-foreground mb-4 font-display">
+                Not Sure Which Program Is <span className="text-luxury">Right for You?</span>
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-muted-foreground mb-6 font-sans">
                 Talk to our career counsellors for personalized guidance based on your background and goals.
               </p>
               <Button 
-                className="bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 px-8 py-3"
+                variant="luxury"
+                className="px-8 py-3"
                 onClick={() => {
                   const form = document.querySelector('#career-counselling-form');
                   if (form) {

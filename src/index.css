@@ -41,15 +41,17 @@ All colors MUST be HSL.
 
     --radius: 1rem;
 
-    /* Modern brand colors */
+    /* Luxury brand colors */
     --brand-gradient: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(283 83% 58%) 50%, hsl(304 83% 58%) 100%);
     --brand-gradient-soft: linear-gradient(135deg, hsl(262 83% 95%) 0%, hsl(283 83% 95%) 50%, hsl(304 83% 95%) 100%);
+    --brand-gradient-luxury: linear-gradient(135deg, hsl(262 90% 65%) 0%, hsl(283 90% 65%) 50%, hsl(304 90% 65%) 100%);
     
-    /* Modern gradients */
+    /* Sophisticated gradients */
     --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(283 83% 58%) 100%);
     --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(220 100% 60%) 100%);
     --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(262 83% 98%) 100%);
     --gradient-surface: linear-gradient(135deg, hsl(262 20% 98%) 0%, hsl(220 14% 96%) 100%);
+    --gradient-luxury-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(262 20% 99%) 50%, hsl(283 20% 99%) 100%);
     
     /* Bold accent colors */
     --electric-blue: 214 100% 60%;
@@ -125,6 +127,19 @@ All colors MUST be HSL.
   
   h1, h2, h3, h4, h5, h6 {
     @apply font-display font-bold tracking-tight;
+    letter-spacing: -0.02em;
+  }
+  
+  .text-luxury {
+    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow bg-clip-text text-transparent;
+  }
+  
+  .btn-luxury {
+    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow hover:opacity-90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0;
+  }
+  
+  .card-luxury {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300;
   }
 }
 
@@ -133,15 +148,28 @@ All colors MUST be HSL.
     @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow bg-clip-text text-transparent;
   }
   
+  .text-luxury {
+    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow bg-clip-text text-transparent;
+  }
+  
   .glass-card {
-    @apply backdrop-blur-sm bg-white/80 border border-white/20;
+    @apply backdrop-blur-sm bg-white/90 border border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300;
+  }
+  
+  .luxury-card {
+    background: var(--gradient-luxury-card);
+    @apply border-0 shadow-xl hover:shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] transform;
   }
   
   .modern-card {
-    @apply bg-gradient-to-br from-white to-primary/5 border-0 shadow-xl backdrop-blur-sm;
+    @apply bg-gradient-to-br from-white to-primary/5 border-0 shadow-xl backdrop-blur-sm hover:shadow-2xl transition-all duration-300;
   }
   
   .hero-glow {
     @apply relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/20 before:via-neon-purple/20 before:to-primary-glow/20 before:blur-3xl before:-z-10;
+  }
+  
+  .luxury-button {
+    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow hover:opacity-90 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0 hover:scale-105 transform;
   }
 }
