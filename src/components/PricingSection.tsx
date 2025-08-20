@@ -42,16 +42,19 @@ export const PricingSection = () => {
                 </div>
                 
                 <CardHeader className="text-center pb-8 pt-12">
-                  <CardTitle className="text-3xl font-bold text-gray-900 mb-4">
+                  <CardTitle className="text-3xl font-bold text-foreground mb-4 font-display">
                     Complete Program
                   </CardTitle>
-                  <div className="space-y-2">
-                    <div className="text-5xl font-bold text-gray-900">
-                      ₹70,000
-                      <span className="text-lg font-normal text-gray-600 ml-2">for 6 months</span>
+                  <div className="space-y-4">
+                    <div className="text-lg text-muted-foreground line-through">
+                      ₹149,000
                     </div>
-                    <div className="text-gray-600">
-                      or just <span className="font-bold text-blue-600">₹11,667/month</span> with EMI
+                    <div className="text-5xl font-bold text-foreground">
+                      ₹70,000
+                      <span className="text-lg font-normal text-muted-foreground ml-2">for 6 months</span>
+                    </div>
+                    <div className="text-primary font-semibold text-lg">
+                      💰 Save ₹79,000 with our limited offer
                     </div>
                   </div>
                 </CardHeader>
@@ -69,16 +72,16 @@ export const PricingSection = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg py-6">
-                      Start Free 1-Week Trial
+                    <Button className="w-full bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 text-lg py-6">
+                      Unlock Your Personalized Path
                     </Button>
-                    <Button variant="outline" className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 py-3">
+                    <Button variant="outline" className="w-full border-2 border-primary text-primary hover:bg-primary/5 py-3">
                       Apply for Scholarship (Save up to ₹10,000)
                     </Button>
                   </div>
 
-                  <p className="text-center text-sm text-gray-600 mt-4">
-                    💳 Easy EMI options available • 🔒 Secure payment • 📞 24/7 support
+                  <p className="text-center text-sm text-muted-foreground mt-4">
+                    🔒 Secure payment • 📞 24/7 support • 💼 100% Job guarantee
                   </p>
                 </CardContent>
               </Card>
@@ -151,26 +154,34 @@ export const PricingSection = () => {
           </div>
         </div>
 
-        {/* Payment Options */}
+        {/* Value Prop */}
         <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8">
-            Flexible Payment Options
-          </h3>
-          <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h4 className="font-bold text-gray-900 mb-2">Full Payment</h4>
-              <p className="text-2xl font-bold text-blue-600 mb-2">₹70,000</p>
-              <p className="text-sm text-gray-600">One-time payment with maximum savings</p>
-            </div>
-            <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
-              <h4 className="font-bold text-gray-900 mb-2">6-Month EMI</h4>
-              <p className="text-2xl font-bold text-blue-600 mb-2">₹11,667/mo</p>
-              <p className="text-sm text-gray-600">Most popular • 0% interest</p>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h4 className="font-bold text-gray-900 mb-2">12-Month EMI</h4>
-              <p className="text-2xl font-bold text-blue-600 mb-2">₹6,250/mo</p>
-              <p className="text-sm text-gray-600">Lowest monthly payment</p>
+          <div className="bg-card rounded-3xl p-8 shadow-lg max-w-4xl mx-auto border">
+            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-6 font-display">
+              Why Choose Our Personalized Approach?
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl">🎯</span>
+                </div>
+                <h4 className="font-bold text-foreground mb-2">Tailored Learning</h4>
+                <p className="text-sm text-muted-foreground">Custom roadmap based on your unique background and goals</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl">🤝</span>
+                </div>
+                <h4 className="font-bold text-foreground mb-2">Expert Mentorship</h4>
+                <p className="text-sm text-muted-foreground">1-on-1 guidance from industry professionals</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-2xl">💼</span>
+                </div>
+                <h4 className="font-bold text-foreground mb-2">Guaranteed Results</h4>
+                <p className="text-sm text-muted-foreground">100% placement support with our proven track record</p>
+              </div>
             </div>
           </div>
         </div>

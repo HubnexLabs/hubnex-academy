@@ -35,13 +35,13 @@ export const FinalCTASection = () => {
         <div className="max-w-4xl mx-auto text-center">
           <div className="space-y-6 md:space-y-8">
             <div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-4 md:mb-6 leading-tight">
-                Your Dream Job is Just 
-                <span className="block text-yellow-300">One Click Away</span>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-4 md:mb-6 leading-tight font-display">
+                Your Personalized Career Journey
+                <span className="block text-yellow-300">Starts Here</span>
               </h2>
               <p className="text-sm md:text-lg lg:text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
-                Join 1000+ successful alumni who transformed their careers with real projects, 
-                expert mentorship, and guaranteed placement support. Your transformation starts today.
+                We value your time and money. Our commitment is your success — backed by 100% placement support. 
+                Join 1000+ alumni who transformed their careers with personalized learning paths.
               </p>
             </div>
 
@@ -49,9 +49,14 @@ export const FinalCTASection = () => {
               <Button 
                 size="lg"
                 className="bg-white text-blue-600 hover:bg-gray-100 text-base md:text-lg lg:text-xl px-6 md:px-8 lg:px-12 py-3 md:py-4 lg:py-6 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 font-bold w-full sm:w-auto"
-                onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
+                onClick={() => {
+                  const form = document.querySelector('#career-counselling-form');
+                  if (form) {
+                    form.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
               >
-                🚀 Start Free Trial Now
+                🚀 Claim Your Custom Journey
               </Button>
               <Button 
                 size="lg"
@@ -67,15 +72,15 @@ export const FinalCTASection = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-blue-100">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm md:text-base">1-Week Free Trial</span>
+                <span className="text-sm md:text-base">Free Personalized Roadmap</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
-                <span className="text-sm md:text-base">No Payment Required</span>
+                <span className="text-sm md:text-base">Expert Guidance</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-                <span className="text-sm md:text-base">100% Satisfaction Guaranteed</span>
+                <span className="text-sm md:text-base">100% Placement Guarantee</span>
               </div>
             </div>
           </div>
@@ -106,7 +111,7 @@ export const FinalCTASection = () => {
             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-base md:text-lg py-3 md:py-4 font-bold"
             onClick={scrollToForm}
           >
-            Start One Week Free Trial
+            Get Your Free Roadmap
           </Button>
         </div>
       </div>

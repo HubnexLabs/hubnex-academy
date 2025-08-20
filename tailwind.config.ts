@@ -20,8 +20,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'inter': ['Inter', 'sans-serif'],
-				'poppins': ['Poppins', 'sans-serif'],
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'display': ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+				'mono': ['JetBrains Mono', 'Menlo', 'Monaco', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

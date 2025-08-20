@@ -6,6 +6,7 @@ import { BenefitsSection } from "@/components/BenefitsSection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { ProgramsSection } from "@/components/ProgramsSection";
+import { UserJourneySection } from "@/components/UserJourneySection";
 import { PricingSection } from "@/components/PricingSection";
 import { FAQSection } from "@/components/FAQSection";
 import { GuaranteeSection } from "@/components/GuaranteeSection";
@@ -27,7 +28,12 @@ const Index = () => {
         url="/"
         type="website"
       />
-      <OrganizationSchema />
+      <OrganizationSchema 
+        name="Codelabs by Hubnex Labs"
+        description="Transform freshers into industry-ready professionals through real projects and expert mentorship. Join 1000+ alumni with average salary of ₹12.85 LPA at top companies."
+        url="https://codelabs.lovable.app"
+        logo="https://codelabs.lovable.app/lovable-uploads/622b6e79-d77c-466c-88ab-056de20ca811.png"
+      />
       <BreadcrumbSchema items={breadcrumbItems} />
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -46,6 +52,9 @@ const Index = () => {
           </section>
           <section aria-label="Programs">
             <ProgramsSection />
+          </section>
+          <section aria-label="User Journey">
+            <UserJourneySection />
           </section>
           <section aria-label="Pricing">
             <PricingSection />

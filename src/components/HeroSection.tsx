@@ -13,30 +13,36 @@ export const HeroSection = () => {
           {/* Left Content */}
           <div className="space-y-6 md:space-y-8 order-1">
             <div className="space-y-4 md:space-y-6">
-              <Badge className="bg-green-100 text-green-800 hover:bg-green-100 font-medium text-xs md:text-sm">
-                🎯 100% Placement Support
+              <Badge className="bg-primary/10 text-primary hover:bg-primary/10 font-medium text-xs md:text-sm border-0">
+                🎯 100% Placement Guarantee
               </Badge>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight font-poppins">
-                Become <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Industry-Ready.</span><br />
+              <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-6xl font-bold text-foreground leading-tight font-display">
+                Become <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-glow">Industry-Ready.</span><br />
                 Not Just Certified.
               </h1>
-              <p className="text-sm md:text-base lg:text-lg text-gray-600 leading-relaxed">
-                Work on real client projects, get mentored by IT leaders, and land your dream job with 100% placement support. Built by a real IT company, not an EdTech.
+              <p className="text-sm md:text-base lg:text-lg text-muted-foreground leading-relaxed">
+                Get a tailored roadmap aligned with your skills and career goals. Work on real client projects, 
+                receive expert mentorship, and land your dream job with guaranteed placement support.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold w-full sm:w-auto"
-                onClick={() => window.open('https://forms.gle/AkvpK2buZghx5xK7A', '_blank')}
+                className="bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-semibold w-full sm:w-auto"
+                onClick={() => {
+                  const form = document.querySelector('#career-counselling-form');
+                  if (form) {
+                    form.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
               >
-                Start Free 1-Week Trial
+                Get Your Roadmap Free
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 font-semibold w-full sm:w-auto"
+                className="border-2 border-primary text-primary hover:bg-primary/5 text-sm md:text-base lg:text-lg px-4 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 font-semibold w-full sm:w-auto"
                 onClick={() => {
                   const form = document.querySelector('#career-counselling-form');
                   if (form) {

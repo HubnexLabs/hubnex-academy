@@ -14,59 +14,48 @@ import {
 export const ProgramsSection = () => {
   const programs = [
     {
-      icon: Code,
-      title: "Fullstack (MERN) Developer",
+      icon: BarChart,
+      title: "Data Analytics",
       duration: "6 Months",
-      description: "Master MongoDB, Express.js, React, and Node.js with real project experience. Build scalable web applications.",
-      skills: ["React.js", "Node.js", "MongoDB", "Express.js", "JavaScript", "REST APIs"],
-      avgSalary: "₹6-12 LPA",
-      badge: "Most Popular",
-      color: "from-blue-500 to-blue-600",
-      price: "₹99,000"
+      description: "Transform raw data into actionable insights with Python, SQL, and advanced visualization tools. Master statistical analysis and machine learning.",
+      skills: ["Python", "SQL", "Tableau", "Power BI", "Statistical Analysis", "Machine Learning"],
+      avgSalary: "₹8-15 LPA",
+      badge: "High Demand",
+      color: "from-blue-500 to-indigo-600",
+      price: "₹70,000"
     },
     {
-      icon: Palette,
-      title: "UI/UX & Product Designer", 
+      icon: Code,
+      title: "AIML Engineering",
       duration: "6 Months",
-      description: "Design user-centered experiences with Figma, conduct user research, and create stunning interfaces.",
-      skills: ["Figma", "User Research", "Prototyping", "Design Systems", "Usability Testing"],
-      avgSalary: "₹5-10 LPA",
-      badge: "Creative",
-      color: "from-purple-500 to-purple-600",
-      price: "₹89,000"
+      description: "Build intelligent systems with cutting-edge AI and ML technologies. Work on real-world AI projects from computer vision to NLP.",
+      skills: ["Python", "TensorFlow", "PyTorch", "Computer Vision", "NLP", "Deep Learning"],
+      avgSalary: "₹10-20 LPA",
+      badge: "Future Tech",
+      color: "from-purple-500 to-pink-600",
+      price: "₹70,000"
+    },
+    {
+      icon: Code,
+      title: "Fullstack Engineering",
+      duration: "6 Months",
+      description: "Master modern web development with MERN stack and cloud technologies. Build scalable applications used by millions.",
+      skills: ["React.js", "Node.js", "MongoDB", "Express.js", "AWS", "Docker"],
+      avgSalary: "₹7-16 LPA",
+      badge: "Most Popular",
+      color: "from-green-500 to-teal-600",
+      price: "₹70,000"
     },
     {
       icon: Target,
       title: "Product Management",
-      duration: "6 Months", 
-      description: "Learn product strategy, roadmap planning, and stakeholder management from senior PMs.",
-      skills: ["Product Strategy", "Analytics", "Roadmapping", "User Stories", "A/B Testing"],
-      avgSalary: "₹8-15 LPA",
-      badge: "High Growth",
-      color: "from-green-500 to-green-600",
-      price: "₹1,09,000"
-    },
-    {
-      icon: Users,
-      title: "Talent Acquisition",
-      duration: "4 Months",
-      description: "Master recruitment strategies, candidate sourcing, and talent pipeline management.",
-      skills: ["Sourcing", "Interviewing", "ATS", "Talent Pipeline", "Employer Branding"],
-      avgSalary: "₹4-8 LPA", 
-      badge: "People-Focused",
-      color: "from-orange-500 to-orange-600",
-      price: "₹69,000"
-    },
-    {
-      icon: BarChart,
-      title: "Data Analytics",
-      duration: "5 Months",
-      description: "Analyze data with Python, SQL, and visualization tools. Make data-driven business decisions.",
-      skills: ["Python", "SQL", "Tableau", "Excel", "Statistical Analysis", "Machine Learning"],
-      avgSalary: "₹6-12 LPA",
-      badge: "Data-Driven",
-      color: "from-indigo-500 to-indigo-600",
-      price: "₹94,000"
+      duration: "6 Months",
+      description: "Drive product strategy and execution at scale. Learn from senior PMs who've built products used by millions.",
+      skills: ["Product Strategy", "Analytics", "Roadmapping", "User Research", "A/B Testing"],
+      avgSalary: "₹12-25 LPA",
+      badge: "Leadership",
+      color: "from-orange-500 to-red-600",
+      price: "₹70,000"
     }
   ];
 
@@ -77,9 +66,11 @@ export const ProgramsSection = () => {
           key={index}
           name={program.title}
           description={program.description}
+          provider="Codelabs by Hubnex Labs"
           url={`https://codelabs.lovable.app/#programs`}
           duration={program.duration}
           price={program.price}
+          skillLevel="Beginner to Advanced"
           category="Technology"
         />
       ))}
@@ -139,10 +130,18 @@ export const ProgramsSection = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <Button className={`w-full bg-gradient-to-r ${program.color} hover:opacity-90 transition-opacity`}>
-                        Start Free Trial
+                      <Button 
+                        className={`w-full bg-gradient-to-r ${program.color} hover:opacity-90 transition-opacity`}
+                        onClick={() => {
+                          const form = document.querySelector('#career-counselling-form');
+                          if (form) {
+                            form.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }}
+                      >
+                        Get Your Roadmap Free
                       </Button>
-                      <Button variant="outline" className="w-full border-gray-300">
+                      <Button variant="outline" className="w-full border-border">
                         Learn More
                       </Button>
                     </div>
@@ -160,7 +159,15 @@ export const ProgramsSection = () => {
               <p className="text-gray-600 mb-6">
                 Talk to our career counsellors for personalized guidance based on your background and goals.
               </p>
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-8 py-3">
+              <Button 
+                className="bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 px-8 py-3"
+                onClick={() => {
+                  const form = document.querySelector('#career-counselling-form');
+                  if (form) {
+                    form.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
                 Get Free Career Counselling
               </Button>
             </div>
