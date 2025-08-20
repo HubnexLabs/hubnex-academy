@@ -22,16 +22,12 @@ export const FAQSection = () => {
       answer: "Perfect! That's exactly who we're designed for. We have no eligibility criteria - whether you're a fresh graduate, final-year student, or career changer, we'll help you succeed. Month 1 focuses on building your foundation through interactive cohorts and peer learning. Our mentors provide personalized guidance throughout your journey."
     },
     {
-      question: "What makes your projects different from other programs?",
-      answer: "Our projects are real, non-billable client work from Hubnex Labs' portfolio. You're not building toy applications - you're solving actual business problems that impact real users. You'll also shadow live client projects to understand enterprise-level development practices. This gives you genuine experience that stands out in interviews."
+      question: "How does the payment work?",
+      answer: "We offer one simple payment of ₹70,000 (originally ₹149,000 - you save ₹79,000!). You can also earn up to ₹10,000 scholarship through our aptitude exam. We also offer referral rewards worth ₹3,000 total for successful referrals."
     },
     {
-      question: "How do the payment plans work?",
-      answer: "We offer flexible options: full payment (₹70,000), 6-month EMI (₹11,667/month), or 12-month EMI (₹6,250/month). You can also earn up to ₹10,000 scholarship through our aptitude exam. Plus, try our 1-week free trial - pay only if you're satisfied. We also offer referral rewards worth ₹3,000 total."
-    },
-    {
-      question: "What's included in the 1-week free trial?",
-      answer: "You'll get full access to our platform, attend live mentor sessions, participate in project discussions, and interact with current students. No payment required, no hidden commitments. This lets you experience our quality firsthand before making a decision."
+      question: "What's included in the personalized roadmap?",
+      answer: "You'll get a custom learning path designed specifically for your background and goals, 1-on-1 mentor sessions, real client project experience, comprehensive skill assessments, and dedicated placement support. Everything is tailored to ensure your success."
     },
     {
       question: "Are the certificates industry-recognized?",

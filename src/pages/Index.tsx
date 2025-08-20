@@ -7,9 +7,9 @@ import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { ProgramsSection } from "@/components/ProgramsSection";
 import { UserJourneySection } from "@/components/UserJourneySection";
-import { PricingSection } from "@/components/PricingSection";
+import { ModernPricingSection } from "@/components/ModernPricingSection";
 import { FAQSection } from "@/components/FAQSection";
-import { GuaranteeSection } from "@/components/GuaranteeSection";
+import { ModernGuaranteeSection } from "@/components/ModernGuaranteeSection";
 import { FinalCTASection } from "@/components/FinalCTASection";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -36,7 +36,7 @@ const Index = () => {
       />
       <BreadcrumbSchema items={breadcrumbItems} />
       
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
         <Header />
         
         <main role="main">
@@ -57,13 +57,13 @@ const Index = () => {
             <UserJourneySection />
           </section>
           <section aria-label="Pricing">
-            <PricingSection />
+            <ModernPricingSection />
           </section>
           <section aria-label="FAQ">
             <FAQSection />
           </section>
           <section aria-label="Guarantee">
-            <GuaranteeSection />
+            <ModernGuaranteeSection />
           </section>
           <section aria-label="Call to action">
             <FinalCTASection />

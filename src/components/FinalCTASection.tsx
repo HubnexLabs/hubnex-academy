@@ -105,13 +105,13 @@ export const FinalCTASection = () => {
           )}
         </div>
 
-        {/* Sticky Trial Button for Mobile */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-2xl z-40 md:hidden">
+        {/* Sticky CTA Button for Mobile */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm p-4 shadow-2xl z-40 md:hidden border-t border-border">
           <Button 
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-base md:text-lg py-3 md:py-4 font-bold"
+            className="w-full bg-gradient-to-r from-primary via-neon-purple to-primary-glow hover:opacity-90 text-lg py-4 font-bold border-0 animate-glow"
             onClick={scrollToForm}
           >
-            Get Your Free Roadmap
+            🚀 Claim Your Custom Journey
           </Button>
         </div>
       </div>

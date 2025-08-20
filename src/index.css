@@ -10,17 +10,18 @@ All colors MUST be HSL.
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 220 10% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 10% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 10% 8%;
 
-    --primary: 254 76% 56%;
+    --primary: 262 83% 58%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 254 76% 66%;
+    --primary-glow: 262 83% 68%;
+    --primary-dark: 262 83% 48%;
 
     --secondary: 220 14.3% 95.9%;
     --secondary-foreground: 220.9 39.3% 11%;
@@ -28,27 +29,41 @@ All colors MUST be HSL.
     --muted: 220 14.3% 95.9%;
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --accent: 262 83% 95%;
+    --accent-foreground: 262 83% 18%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 254 76% 56%;
+    --ring: 262 83% 58%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Modern gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(254 76% 56%) 0%, hsl(220 76% 56%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(220 14% 98%) 100%);
+    /* Modern brand colors */
+    --brand-gradient: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(283 83% 58%) 50%, hsl(304 83% 58%) 100%);
+    --brand-gradient-soft: linear-gradient(135deg, hsl(262 83% 95%) 0%, hsl(283 83% 95%) 50%, hsl(304 83% 95%) 100%);
     
-    /* Modern shadows */
-    --shadow-card: 0 4px 6px -1px hsl(220 13% 91% / 0.1), 0 2px 4px -1px hsl(220 13% 91% / 0.06);
-    --shadow-elevation: 0 10px 15px -3px hsl(220 13% 91% / 0.1), 0 4px 6px -2px hsl(220 13% 91% / 0.05);
-    --shadow-hover: 0 20px 25px -5px hsl(220 13% 91% / 0.1), 0 10px 10px -5px hsl(220 13% 91% / 0.04);
+    /* Modern gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(283 83% 58%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(220 100% 60%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(262 83% 98%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(262 20% 98%) 0%, hsl(220 14% 96%) 100%);
+    
+    /* Bold accent colors */
+    --electric-blue: 214 100% 60%;
+    --neon-purple: 283 100% 70%;
+    --cyber-green: 142 76% 36%;
+    --warning-orange: 31 100% 60%;
+    
+    /* Enhanced shadows */
+    --shadow-sm: 0 2px 4px hsl(220 13% 91% / 0.12);
+    --shadow-md: 0 4px 8px hsl(220 13% 91% / 0.16);
+    --shadow-lg: 0 8px 16px hsl(220 13% 91% / 0.2);
+    --shadow-xl: 0 16px 32px hsl(220 13% 91% / 0.24);
+    --shadow-brand: 0 8px 32px hsl(262 83% 58% / 0.3);
+    --shadow-glow: 0 0 40px hsl(262 83% 58% / 0.4);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -57,7 +72,7 @@ All colors MUST be HSL.
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 262 83% 58%;
   }
 
   .dark {
@@ -105,6 +120,28 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary via-neon-purple to-primary-glow bg-clip-text text-transparent;
+  }
+  
+  .glass-card {
+    @apply backdrop-blur-sm bg-white/80 border border-white/20;
+  }
+  
+  .modern-card {
+    @apply bg-gradient-to-br from-white to-primary/5 border-0 shadow-xl backdrop-blur-sm;
+  }
+  
+  .hero-glow {
+    @apply relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/20 before:via-neon-purple/20 before:to-primary-glow/20 before:blur-3xl before:-z-10;
   }
 }

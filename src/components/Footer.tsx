@@ -44,13 +44,13 @@ export const Footer = () => {
 
           {/* Support */}
           <div>
-            <h4 className="font-bold text-lg mb-4">Support</h4>
+            <h4 className="font-bold text-lg mb-4 text-white/90">Support</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Career Counselling</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Free Trial</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Scholarship Exam</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors">EMI Options</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Placement Support</a></li>
+              <li><a href="#" className="hover:text-primary-glow transition-colors">Career Counselling</a></li>
+              <li><a href="#" className="hover:text-primary-glow transition-colors">Personalized Roadmap</a></li>
+              <li><a href="#" className="hover:text-primary-glow transition-colors">Scholarship Exam</a></li>
+              <li><a href="#" className="hover:text-primary-glow transition-colors">Payment Plans</a></li>
+              <li><a href="#" className="hover:text-primary-glow transition-colors">Placement Support</a></li>
             </ul>
           </div>
 

@@ -103,12 +103,28 @@ export const HowItWorksSection = () => {
             <p className="text-gray-600 mb-6">
               Join thousands who've already transformed their careers with real projects and industry mentorship.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 font-semibold">
-                Start Free Trial
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <button 
+                className="bg-gradient-to-r from-primary via-neon-purple to-primary-glow text-white px-8 py-4 rounded-2xl hover:opacity-90 transition-all duration-300 transform hover:scale-105 font-bold text-lg shadow-xl border-0"
+                onClick={() => {
+                  const form = document.querySelector('#career-counselling-form');
+                  if (form) {
+                    form.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
+                🚀 Get Your Roadmap Free
               </button>
-              <button className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg hover:bg-blue-50 transition-all duration-300 font-semibold">
-                Talk to Counsellor
+              <button 
+                className="border-2 border-primary text-primary px-8 py-4 rounded-2xl hover:bg-primary/10 transition-all duration-300 font-bold text-lg backdrop-blur-sm"
+                onClick={() => {
+                  const form = document.querySelector('#career-counselling-form');
+                  if (form) {
+                    form.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
+                📞 Talk to Counsellor
               </button>
             </div>
           </div>
