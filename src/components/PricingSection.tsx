@@ -17,16 +17,16 @@ export const PricingSection = () => {
   ];
 
   return (
-    <section id="pricing" className="py-20 px-4 bg-white">
+    <section id="pricing" className="py-20 px-4 bg-gradient-to-br from-background via-primary/5 to-accent/10">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-green-100 text-green-800 hover:bg-green-100">
-            Investment in Your Future
+          <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/15 border-primary/20">
+            💰 Investment in Your Future
           </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Transparent Pricing, Maximum Value
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 font-display">
+            Transparent Pricing, <span className="text-luxury">Maximum Value</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-sans">
             One affordable price for life-changing career transformation. No hidden fees, no surprises.
           </p>
         </div>
@@ -36,8 +36,8 @@ export const PricingSection = () => {
             
             {/* Main Pricing Card */}
             <div className="lg:col-span-2">
-              <Card className="relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-blue-50 to-indigo-50">
-                <div className="absolute top-0 right-0 bg-gradient-to-l from-blue-600 to-indigo-600 text-white px-8 py-2 rounded-bl-2xl">
+              <Card className="relative overflow-hidden border-0 shadow-2xl luxury-card">
+                <div className="absolute top-0 right-0 bg-gradient-to-l from-primary to-primary-glow text-primary-foreground px-8 py-2 rounded-bl-2xl">
                   <span className="font-bold">Most Popular</span>
                 </div>
                 
@@ -63,21 +63,30 @@ export const PricingSection = () => {
                   <div className="grid md:grid-cols-2 gap-6 mb-8">
                     {features.map((feature, index) => (
                       <div key={index} className="flex items-center space-x-3">
-                        <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Check className="w-4 h-4 text-green-600" />
+                        <div className="w-6 h-6 bg-cyber-green/20 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="w-4 h-4 text-cyber-green" />
                         </div>
-                        <span className="text-gray-700">{feature}</span>
+                        <span className="text-foreground font-medium">{feature}</span>
                       </div>
                     ))}
                   </div>
 
                   <div className="space-y-4">
-                    <Button className="w-full bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 text-lg py-6">
-                      Unlock Your Personalized Path
-                    </Button>
-                    <Button variant="outline" className="w-full border-2 border-primary text-primary hover:bg-primary/5 py-3">
-                      Apply for Scholarship (Save up to ₹10,000)
-                    </Button>
+                   <Button 
+                     className="w-full text-lg py-6" 
+                     variant="luxury"
+                     onClick={() => {
+                       const form = document.querySelector('#career-counselling-form');
+                       if (form) {
+                         form.scrollIntoView({ behavior: 'smooth' });
+                       }
+                     }}
+                   >
+                     🚀 Unlock Your Personalized Path
+                   </Button>
+                   <Button variant="outline" className="w-full border-2 border-primary text-primary hover:bg-primary/5 py-3">
+                     Apply for Scholarship (Save up to ₹10,000)
+                   </Button>
                   </div>
 
                   <p className="text-center text-sm text-muted-foreground mt-4">
@@ -91,60 +100,60 @@ export const PricingSection = () => {
             <div className="space-y-6">
               
               {/* Scholarship Card */}
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-yellow-50 to-orange-50">
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-warning-orange/10 to-warning-orange/20">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-warning-orange to-warning-orange rounded-lg flex items-center justify-center">
                       <Gift className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">Scholarship</h3>
-                      <p className="text-sm text-gray-600">Save up to ₹10,000</p>
+                      <h3 className="font-bold text-foreground">Scholarship</h3>
+                      <p className="text-sm text-muted-foreground">Save up to ₹10,000</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700 mb-4">
+                  <p className="text-sm text-muted-foreground mb-4">
                     Take our aptitude exam and earn scholarship based on your score. No entrance fees!
                   </p>
-                  <Button variant="outline" className="w-full text-orange-600 border-orange-600 hover:bg-orange-50">
+                  <Button variant="outline" className="w-full text-warning-orange border-warning-orange hover:bg-warning-orange/5">
                     Take Exam
                   </Button>
                 </CardContent>
               </Card>
 
               {/* Referral Card */}
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-green-50 to-emerald-50">
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-cyber-green/10 to-cyber-green/20">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-cyber-green to-cyber-green rounded-lg flex items-center justify-center">
                       <Users className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">Refer & Earn</h3>
-                      <p className="text-sm text-gray-600">₹3,000 Total Rewards</p>
+                      <h3 className="font-bold text-foreground">Refer & Earn</h3>
+                      <p className="text-sm text-muted-foreground">₹3,000 Total Rewards</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700 mb-4">
+                  <p className="text-sm text-muted-foreground mb-4">
                     Get ₹2,000 cash + ₹1,000 Amazon voucher for each successful referral.
                   </p>
-                  <Button variant="outline" className="w-full text-green-600 border-green-600 hover:bg-green-50">
+                  <Button variant="outline" className="w-full text-cyber-green border-cyber-green hover:bg-cyber-green/5">
                     Refer Now
                   </Button>
                 </CardContent>
               </Card>
 
               {/* Guarantee Card */}
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-purple-50 to-violet-50">
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-primary/10 to-primary-glow/20">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-violet-500 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-primary to-primary-glow rounded-lg flex items-center justify-center">
                       <Star className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">Our Promise</h3>
-                      <p className="text-sm text-gray-600">100% Satisfaction</p>
+                      <h3 className="font-bold text-foreground">Our Promise</h3>
+                      <p className="text-sm text-muted-foreground">100% Satisfaction</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-muted-foreground">
                     Try us free for 1 week. Pay only if you're 100% satisfied with the program quality.
                   </p>
                 </CardContent>

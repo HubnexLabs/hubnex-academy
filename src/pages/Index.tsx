@@ -7,7 +7,7 @@ import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { ProgramsSection } from "@/components/ProgramsSection";
 import { UserJourneySection } from "@/components/UserJourneySection";
-import { ModernPricingSection } from "@/components/ModernPricingSection";
+import { PricingSection } from "@/components/PricingSection";
 import { FAQSection } from "@/components/FAQSection";
 import { ModernGuaranteeSection } from "@/components/ModernGuaranteeSection";
 import { FinalCTASection } from "@/components/FinalCTASection";
@@ -57,7 +57,7 @@ const Index = () => {
             <UserJourneySection />
           </section>
           <section aria-label="Pricing">
-            <ModernPricingSection />
+            <PricingSection />
           </section>
           <section aria-label="FAQ">
             <FAQSection />
