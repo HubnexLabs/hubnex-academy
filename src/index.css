@@ -164,7 +164,7 @@ All colors MUST be HSL.
   }
   
   .modern-card {
-    @apply bg-gradient-to-br from-white to-primary/8 border-0 shadow-lg backdrop-blur-sm hover:shadow-xl hover:scale-[1.01] transition-all duration-300;
+    @apply bg-gradient-to-br from-white to-primary/5 border-0 shadow-lg backdrop-blur-sm hover:shadow-xl hover:scale-[1.01] transition-all duration-300;
   }
   
   .hero-glow {
