@@ -63,6 +63,7 @@ export default {
 				'electric-blue': 'hsl(var(--electric-blue))',
 				'neon-blue': 'hsl(var(--neon-blue))',
 				'cyber-green': 'hsl(var(--cyber-green))',
+				'success-green': 'hsl(var(--success-green))',
 				'warning-orange': 'hsl(var(--warning-orange))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
