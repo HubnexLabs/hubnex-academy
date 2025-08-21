@@ -81,6 +81,14 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			boxShadow: {
+				'sm': '0 2px 4px hsl(230 15% 15% / 0.08)',
+				'md': '0 4px 8px hsl(230 15% 15% / 0.12)',
+				'lg': '0 8px 16px hsl(230 15% 15% / 0.15)',
+				'xl': '0 20px 40px hsl(230 15% 15% / 0.20)',
+				'brand': '0 10px 40px hsl(214 100% 55% / 0.35)',
+				'glow': '0 0 50px hsl(214 100% 55% / 0.5)',
+			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
